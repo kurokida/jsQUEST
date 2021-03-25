@@ -176,9 +176,16 @@ function find_non_zero_index(my_array){
     });
     return indices
 }
-// const aa = [2, 3, 0, 4, 0, 5]
-// console.log(aa)
-// console.log(find_non_zero_index(aa))
+
+function find_more_than_zero_index(my_array){
+    const indices = []
+    my_array.forEach((element, index) => {
+      if (element > 0){
+          indices.push(index)
+      }
+    });
+    return indices
+}
 
 function get_array_using_index(array, indices){
     const values = []
@@ -188,15 +195,14 @@ function get_array_using_index(array, indices){
     return values
 }
 
-// function find_more_than_zero(my_array){
-//     const indices = []
-//     my_array.forEach((element, index, array) => {
-//         if (element > 0) {
-//             indices.push(index)
-//         }
-//     })
-//     return indices
-// }
+function fliplr(array){
+    const result = []
+        array.forEach((element, index, array) => {
+            result.push(array[array.length-1-index])
+        });
+    return result
+}
+
 
 function QuestRecompute(q, plotIt){
     // q=QuestRecompute(q [,plotIt=0])
@@ -250,7 +256,6 @@ function QuestRecompute(q, plotIt){
         alert(`reducing gamma from ${q.gamma} to 0.5`)
         q.gamma = 0.5;
     }
-    console.log(q)
 
     // % Don't visualize functions by default:
     // if nargin < 2 || isempty(plotIt)
@@ -290,10 +295,6 @@ function QuestRecompute(q, plotIt){
         const tmp2 = numeric.sub(1, q.delta)
         const tmp3 = numeric.sub(1, q.gamma)
         const tmp4 = numeric.mul(q.beta, x)
-        // console.log(tmp1)
-        // console.log(tmp2)
-        // console.log(tmp3)
-        // console.log(tmp4)
         const tmp5 = numeric.pow(10, tmp4)
         const tmp6 = numeric.exp(numeric.mul(-1, tmp5))
         const tmp7 = numeric.sub(1, numeric.mul(tmp3, tmp6))
@@ -336,7 +337,6 @@ function QuestRecompute(q, plotIt){
     //     q %#ok<NOPRT>
     //     error(sprintf('psychometric function has no %.2f threshold',q.pThreshold))
     // end
-    console.log(index)
     const p3 = get_array_using_index(q.p2, index)
     const x3 = get_array_using_index(q.x2, index)
     q.xThreshold = numeric.spline(p3, x3).at(q.pThreshold)
@@ -367,7 +367,7 @@ function QuestRecompute(q, plotIt){
     }
 
     // q.s2=fliplr([1-q.p2;q.p2]);
-    q.s2 = [numeric.sub(1, q.p2).reverse(), q.p2.reverse()]
+    q.s2 = [fliplr(numeric.sub(1, q.p2)), fliplr(q.p2)]
 
     // if ~isfield(q,'intensity') || ~isfield(q,'response')
     //     Preallocate for 10000 trials, keep track of real useful content in q.trialCount. 
@@ -461,7 +461,7 @@ function QuestRecompute(q, plotIt){
         // s2はarray of arrayのはずでよく分からない
         q.pdf = numeric.mul(q.pdf, q.s2[q.response(k)+1, ii]) // 4 ms
 
-        if (q.normalizePdf && k % 100 === 0){
+        if (q.normalizePdf && (k+1) % 100 === 0){
 		    q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf))	// % avoid underflow; keep the pdf normalized	% 3 ms
         }
     }
@@ -480,6 +480,120 @@ function QuestRecompute(q, plotIt){
         alert('pdf is not finite')
     }
 
-    console.log(q)
     return q
+}
+
+function cumsum(array){
+    const result = []
+    for (let i = 0; i < array.length; i++){
+      if (i === 0){
+        result.push(array[0])
+      } else {
+        result.push(result[i-1] + array[i])
+      }
+    }
+    return result
+}
+
+function QuestQuantile(q,quantileOrder){
+    // intensity=QuestQuantile(q,[quantileOrder])
+    
+    // Gets a quantile of the pdf in the struct q. You may specify the desired quantileOrder, e.g. 0.5 for median, or, making two calls, 0.05 and 0.95 for a 90confidence interval. 
+    // If the "quantileOrder" argument is not supplied, then it's taken from the "q" struct. 
+    // QuestCreate uses QuestRecompute to compute the optimal quantileOrder and saves that in the "q" struct;
+    // this quantileOrder yields a quantile that is the most informative intensity for the next trial.
+
+    // This is based on work presented at a conference, but otherwise unpublished: Pelli, D. G. (1987). 
+    // The ideal psychometric procedure. Investigative Ophthalmology & Visual Science, 28(Suppl), 366.
+
+    // See Quest.
+
+    let t;
+
+    // if nargin>2
+    //     error('Usage: intensity=QuestQuantile(q,[quantileOrder])')
+    // end
+
+    // if length(q)>1
+    //     if nargin>1
+    //         error('Cannot accept quantileOrder for q vector. Set each q.quantileOrder instead.')
+    //     end
+    //     t=zeros(size(q));
+    //     for i=1:length(q(:))
+    //         t(i)=QuestQuantile(q(i));
+    //     end
+    //     return
+    // end
+    // 複数のqを使っての動作確認
+    if (q.length > 1){
+        if (typeof quantileOrder !== 'undefined') alert('Cannot accept quantileOrder for q vector. Set each q.quantileOrder instead.')
+
+        const t = numeric.rep([q.length], 0)
+        for (let i = 0; i < q.length; i++){
+            t[i] = QuestQuantile(q[i]);
+        }
+    }
+
+    // if nargin<2
+    //     quantileOrder=q.quantileOrder;
+    // end
+    if (typeof quantileOrder === 'undefined' ) quantileOrder = q.quantileOrder
+
+    console.log(quantileOrder)
+    // if quantileOrder > 1 || quantileOrder < 0
+    //     error('quantileOrder %f is outside range 0 to 1.',quantileOrder);
+    // end
+    if (quantileOrder > 1 || quantileOrder < 0){
+        alert(`quantileOrder ${quantileOrder} is outside range 0 to 1.`)
+    }
+
+    p = cumsum(q.pdf);
+    // if ~isfinite(p(end))
+    //     error('pdf is not finite')
+    // end
+    if (!isFinite(p[p.length-1])){
+        alert('pdf is not finite')
+    }
+
+    // if p(end)==0
+    //     error('pdf is all zero')
+    // end
+    if (p[p.length-1] === 0){
+        alert('pdf is all zero')
+    }
+
+    // if quantileOrder < p(1)
+    //     t=q.tGuess+q.x(1);
+    //     return
+    // end
+    if (quantileOrder < p[0]){
+        t = q.tGuess + q.x[0];
+        return t
+    }
+
+    // if quantileOrder > p(end)
+    //     t=q.tGuess+q.x(end);
+    //     return
+    // end
+    if (quantileOrder > p[p.length-1]){
+        t = q.tGuess + q.x[q.x.length - 1];
+        return t
+    }
+
+    // index=find(diff([-1 p])>0);
+    const index = find_more_than_zero_index(diff([-1].concat(p)))
+
+    // if length(index)<2
+    //     error('pdf has only %g nonzero point(s)',length(index));
+    // end
+    if (index.length < 2){
+        alert(`pdf has only ${index.length} nonzero point(s)`)
+    }
+
+    // t=q.tGuess+interp1(p(index),q.x(index),quantileOrder*p(end)); % 40 ms
+    const p2 = get_array_using_index(p, index)
+    const x2 = get_array_using_index(q.x, index)
+    t = q.tGuess + numeric.spline(p2, x2).at(quantileOrder * p[p.length-1])
+
+    return t
 }
