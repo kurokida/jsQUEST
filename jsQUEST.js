@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Daiichiro Kuroki
+// Released under the MIT license
+//  
 function QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, range, plotIt){
     // q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma,[grain],[range],[plotIt])
 
