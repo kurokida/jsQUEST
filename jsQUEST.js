@@ -10,29 +10,42 @@ function QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, ra
 
     // where x represents log10 contrast relative to threshold. 
 
-    // The Weibull function itself appears only in QuestRecompute, which uses the specified parameter values in q to compute a psychometric function and store it in q. 
+    // The Weibull function itself appears only in QuestRecompute, which uses the specified parameter values in q 
+    // to compute a psychometric function and store it in q. 
 
     // All the other Quest functions simply use the psychometric function stored in "q". 
     // QuestRecompute is called solely by QuestCreate and QuestBetaAnalysis (and possibly by a few user programs). 
-    // Thus, if you prefer to use a different kind of psychometric function, called Foo, you need only create your own QuestCreateFoo, QuestRecomputeFoo, and (if you need it)
-    // QuestBetaAnalysisFoo, based on QuestCreate, QuestRecompute, and QuestBetaAnalysis, and you can use them with the rest of the Quest package unchanged. 
+    // Thus, if you prefer to use a different kind of psychometric function, called Foo, 
+    // you need only create your own QuestCreateFoo, QuestRecomputeFoo, and (if you need it)
+    // QuestBetaAnalysisFoo, based on QuestCreate, QuestRecompute, and QuestBetaAnalysis, and you can use them 
+    // with the rest of the Quest package unchanged. 
     // You would only be changing a few lines of code, so it would quite easy to do.
 
-    // Several users of Quest have asked questions on the Psychtoolbox forum about how to restrict themselves to a practical testing range. 
-    // That is not what tGuessSd and "range" are for; they should be large, e.g. I typically set tGuessSd=3 and range=5 when intensity represents log contrast. 
+    // Several users of Quest have asked questions on the Psychtoolbox forum about how to restrict themselves to 
+    // a practical testing range. 
+    // That is not what tGuessSd and "range" are for; they should be large, e.g. I typically set tGuessSd=3 and range=5 
+    // when intensity represents log contrast. 
     // If necessary, you should restrict the range yourself, outside of Quest. 
-    // Here, in QuestCreate, you tell Quest about your prior beliefs, and you should try to be open-minded, giving Quest a generously large range to consider as possible values of threshold. 
+    // Here, in QuestCreate, you tell Quest about your prior beliefs, and you should try to be open-minded, 
+    // giving Quest a generously large range to consider as possible values of threshold. 
     // For each trial you will later ask Quest to suggest a test intensity. 
     // It is important to realize that what Quest returns is just what you asked for, a suggestion. 
-    // You should then test at whatever intensity you like, taking into account both the suggestion and any practical constraints (e.g. a maximum and minimum contrast that you can achieve, and quantization of contrast). 
-    // After running the trial you should call QuestUpdate with the contrast that you actually used and the observer's response to add your new datum to the database. 
+    // You should then test at whatever intensity you like, taking into account both the suggestion and any practical constraints
+    //  (e.g. a maximum and minimum contrast that you can achieve, and quantization of contrast). 
+    // After running the trial you should call QuestUpdate with the contrast that you actually used 
+    // and the observer's response to add your new datum to the database. 
     // Don't restrict "tGuessSd" or "range" by the limitations of what you can display. 
-    // Keep open the possibility that threshold may lie outside the range of contrasts that you can produce, and let Quest consider all possibilities.
+    // Keep open the possibility that threshold may lie outside the range of contrasts that you can produce, 
+    // and let Quest consider all possibilities.
 
     // There is one exception to the above advice of always being generous with tGuessSd. 
-    // Occasionally we find that we have a working Quest-based program that measures threshold, and we discover that we need to measure the proportion correct at a particular intensity. 
-    // Instead of writing a new program, or modifying the old one, it is often more convenient to instead reduce tGuessSd to practically zero, e.g. a value like 0.001, which has the effect of restricting all threshold estimates to be practically identical to tGuess, making it easy to run any number of trials at that intensity. 
-    // Of course, in this case, the final threshold estimate from Quest should be ignored, since it is merely parroting back to you the assertion that threshold is equal to the initial guess "tGuess". 
+    // Occasionally we find that we have a working Quest-based program that measures threshold, 
+    // and we discover that we need to measure the proportion correct at a particular intensity. 
+    // Instead of writing a new program, or modifying the old one, it is often more convenient 
+    // to instead reduce tGuessSd to practically zero, e.g. a value like 0.001, which has the effect of restricting all threshold 
+    // estimates to be practically identical to tGuess, making it easy to run any number of trials at that intensity. 
+    // Of course, in this case, the final threshold estimate from Quest should be ignored, since it is merely parroting back to you 
+    // the assertion that threshold is equal to the initial guess "tGuess". 
     // What's of interest is the final proportion correct; at the end, call QuestTrials or add an FPRINTF statement to report it.
 
     // tGuess is your prior threshold estimate.
@@ -57,7 +70,7 @@ function QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, ra
     // The cost of making "range" too small is that you prejudicially exclude what are actually possible values for threshold. 
     // Getting out-of-range warnings from QuestUpdate is one possible indication that your stated range is too small.
 
-    // See Quest.
+    // % Copyright (c) 1996-2004 Denis Pelli
 
     let q = {}
 
@@ -154,7 +167,7 @@ function QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, ra
     q.dim = dim;
 
     return QuestRecompute(q, plotIt);
-    // return QuestRecompute(q, 1);
+    // return QuestRecompute(q, 1, 400, 300);
     
 }
  
@@ -226,8 +239,9 @@ function min_of_array(arr){
     });
 }
 
+let recompute_chart, recompute_chart2
 
-function QuestRecompute(q, plotIt){
+function QuestRecompute(q, plotIt, chart_width, chart_height){
     // q=QuestRecompute(q [,plotIt=0])
 
     // Call this immediately after changing a parameter of the psychometric function. 
@@ -240,14 +254,18 @@ function QuestRecompute(q, plotIt){
     // p2=delta*gamma+(1-delta)*(1-(1-gamma)*exp(-10.^(beta*(x-xThreshold))));
 
     // where x represents log10 contrast relative to threshold. 
-    // The Weibull function itself appears only in QuestRecompute, which uses the specified parameter values in q to compute a psychometric function and store it in q. 
+    // The Weibull function itself appears only in QuestRecompute, which uses the specified parameter values in q 
+    // to compute a psychometric function and store it in q. 
     // All the other Quest functions simply use the psychometric function stored in "q". 
     // QuestRecompute is called solely by QuestCreate and QuestBetaAnalysis (and possibly by a few user programs). 
-    // Thus, if you prefer to use a different kind of psychometric function, called Foo, you need only create your own QuestCreateFoo, QuestRecomputeFoo, and (if you need it) QuestBetaAnalysisFoo, based on QuestCreate, QuestRecompute, and QuestBetaAnalysis, and you can use them with the rest of the Quest package unchanged. 
+    // Thus, if you prefer to use a different kind of psychometric function, called Foo, you need only create your own 
+    // QuestCreateFoo, QuestRecomputeFoo, and (if you need it) QuestBetaAnalysisFoo, based on QuestCreate, QuestRecompute, 
+    // and QuestBetaAnalysis, and you can use them with the rest of the Quest package unchanged. 
     // You would only be changing a few lines of code, so it would quite easy to do.
 
     // "dim" is the number of distinct intensities that the internal tables in q can store, e.g. 500. 
-    // This vector, of length "dim", with increment size "grain", will be centered on the initial guess tGuess, i.e. tGuess+[-range/2:grain:range/2]. 
+    // This vector, of length "dim", with increment size "grain", will be centered on the initial guess tGuess, 
+    // i.e. tGuess+[-range/2:grain:range/2]. 
     // QUEST assumes that intensities outside of this interval have zero prior probability, i.e. they are impossible values for threshold. 
     // The cost of making "dim" too big is some extra storage and computation, which are usually negligible. 
     // The cost of making "dim" too small is that you prejudicially exclude what are actually possible values for threshold. 
@@ -257,7 +275,8 @@ function QuestRecompute(q, plotIt){
 
     // See QuestCreate, QuestUpdate, QuestQuantile, QuestMean, QuestMode, QuestSd, and QuestSimulate.
 
-    // pending
+    // % Copyright (c) 1996-2004 Denis Pelli
+
     // if length(q)>1
     // 	for i=1:length(q(:))
     // 		q(i).normalizePdf=0; % any norming must be done across the whole set of pdfs, because it's actually one big multi-dimensional pdf.
@@ -343,6 +362,16 @@ function QuestRecompute(q, plotIt){
         if (document.getElementById('recompute_canvas') === null) {
             const canvas_element = document.createElement('canvas');
             canvas_element.id = 'recompute_canvas';
+            if (chart_width === 'undefined') {
+                canvas_element.width = 800
+             } else{
+                canvas_element.width = chart_width
+             } 
+            if (chart_height === 'undefined') {
+                canvas_element.height = 600
+             } else {
+                 canvas_element.height = chart_height
+             }
             document.body.appendChild(canvas_element)
         } 
 
@@ -375,7 +404,8 @@ function QuestRecompute(q, plotIt){
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestRecompute.'
-                }
+                },
+                responsive: false
             }
         })
     }
@@ -410,9 +440,7 @@ function QuestRecompute(q, plotIt){
     // end
     const p3 = get_array_using_index(q.p2, index)
     const x3 = get_array_using_index(q.x2, index)
-    // console.log(p3)
-    // console.log(x3)
-    // q.xThreshold = numeric.spline(p3, x3).at(q.pThreshold) // 
+    // q.xThreshold = numeric.spline(p3, x3).at(q.pThreshold) // Bug?
     q.xThreshold = interp1(p3, x3, [q.pThreshold])[0]
     if (numeric.isFinite(q.xThreshold) === false){
         alert(`psychometric function has no ${q.pThreshold} threshold`)
@@ -424,6 +452,16 @@ function QuestRecompute(q, plotIt){
         if (document.getElementById('recompute_canvas2') === null) {
             const canvas_element = document.createElement('canvas');
             canvas_element.id = 'recompute_canvas2';
+            if (chart_width === 'undefined') {
+                canvas_element.width = 800
+             } else{
+                canvas_element.width = chart_width
+             } 
+            if (chart_height === 'undefined') {
+                canvas_element.height = 600
+             } else {
+                 canvas_element.height = chart_height
+             }
             document.body.appendChild(canvas_element)
         } 
 
@@ -456,7 +494,8 @@ function QuestRecompute(q, plotIt){
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestRecompute.'
-                }
+                },
+                responsive: false
             }
         })
     }
@@ -537,20 +576,17 @@ function QuestRecompute(q, plotIt){
     //     end
     // end
     const large_num = Math.pow(10, 10)
-    // console.log(q.trialCount)
     for (let k = 0; k < q.trialCount; k++){
         const inten = Math.max(-1*large_num, Math.min(large_num, q.intensity[k])); // make intensity finite
         const tmp = Math.round((inten - q.tGuess) / q.grain)
         let ii = numeric.sub(numeric.add(q.pdf.length, q.i), tmp);
         const tmp2 = ii[0]
         if (tmp2 < 1){
-            console.log('check1')
             ii = numeric.sub(numeric.add(ii, 1), tmp2)
         }
         const tmp3 = ii[ii.length-1]
         const tmp4 = numeric.dim(q.s2)[1]
         if (tmp3 > tmp4){
-            console.log('check2')
             ii = numeric.sub(numeric.add(ii, tmp4), tmp3)
         }
         // s2はarray of arrayのはずでよく分からない
@@ -594,7 +630,8 @@ function cumsum(array){
 function QuestQuantile(q,quantileOrder){
     // intensity=QuestQuantile(q,[quantileOrder])
     
-    // Gets a quantile of the pdf in the struct q. You may specify the desired quantileOrder, e.g. 0.5 for median, or, making two calls, 0.05 and 0.95 for a 90confidence interval. 
+    // Gets a quantile of the pdf in the struct q. You may specify the desired quantileOrder, e.g. 0.5 for median, 
+    // or, making two calls, 0.05 and 0.95 for a 90confidence interval. 
     // If the "quantileOrder" argument is not supplied, then it's taken from the "q" struct. 
     // QuestCreate uses QuestRecompute to compute the optimal quantileOrder and saves that in the "q" struct;
     // this quantileOrder yields a quantile that is the most informative intensity for the next trial.
@@ -604,11 +641,12 @@ function QuestQuantile(q,quantileOrder){
 
     // See Quest.
 
-    let t;
+    // % Copyright (c) 1996-2015 Denis Pelli
 
     // if nargin>2
     //     error('Usage: intensity=QuestQuantile(q,[quantileOrder])')
     // end
+    if (typeof q === 'undefined') alert('Usage: intensity=QuestQuantile(q,[quantileOrder])')
 
     // if length(q)>1
     //     if nargin>1
@@ -620,7 +658,6 @@ function QuestQuantile(q,quantileOrder){
     //     end
     //     return
     // end
-    // 複数のqを使っての動作確認
     if (Array.isArray(q) && q.length > 1){
         if (typeof quantileOrder !== 'undefined') alert('Cannot accept quantileOrder for q vector. Set each q.quantileOrder instead.')
 
@@ -636,7 +673,6 @@ function QuestQuantile(q,quantileOrder){
     // end
     if (typeof quantileOrder === 'undefined' ) quantileOrder = q.quantileOrder
 
-    // console.log(quantileOrder)
     // if quantileOrder > 1 || quantileOrder < 0
     //     error('quantileOrder %f is outside range 0 to 1.',quantileOrder);
     // end
@@ -664,7 +700,7 @@ function QuestQuantile(q,quantileOrder){
     //     return
     // end
     if (quantileOrder < p[0]){
-        t = q.tGuess + q.x[0];
+        const t = q.tGuess + q.x[0];
         return t
     }
 
@@ -673,7 +709,7 @@ function QuestQuantile(q,quantileOrder){
     //     return
     // end
     if (quantileOrder > p[p.length-1]){
-        t = q.tGuess + q.x[q.x.length - 1];
+        const t = q.tGuess + q.x[q.x.length - 1];
         return t
     }
 
@@ -690,13 +726,8 @@ function QuestQuantile(q,quantileOrder){
     // t=q.tGuess+interp1(p(index),q.x(index),quantileOrder*p(end)); % 40 ms
     const p2 = get_array_using_index(p, index)
     const x2 = get_array_using_index(q.x, index)
-    // console.log(p2)
-    // console.log(x2)
-    // console.log(quantileOrder)
-    // console.log(p[p.length-1])
     // t = q.tGuess + numeric.spline(p2, x2).at(quantileOrder * p[p.length-1])
-    t = q.tGuess + interp1(p2, x2, [quantileOrder * p[p.length-1]])[0]
-    console.log(t)
+    const t = q.tGuess + interp1(p2, x2, [quantileOrder * p[p.length-1]])[0]
 
     return t
 }
@@ -714,8 +745,6 @@ function get_larger_numbers(array, num){
     return result
 }
 
-// console.log(get_larger_numbers([1,2,3,4,5], 3))
-
 function get_smaller_numbers(array, num){
     const result = []
     array.forEach(x => {
@@ -728,10 +757,9 @@ function get_smaller_numbers(array, num){
     return result
 }
 
-// console.log(get_smaller_numbers([1,2,3,4,5], 3))
+let simulate_chart
 
-
-function QuestSimulate(q,tTest,tActual,plotIt){
+function QuestSimulate(q,tTest,tActual,plotIt, chart_width, chart_height){
     // % response=QuestSimulate(q,intensity,tActual [,plotIt])
     //
     // Simulate the response of an observer with threshold tActual when exposed to a stimulus tTest.
@@ -741,10 +769,14 @@ function QuestSimulate(q,tTest,tActual,plotIt){
     // plotIt == 2 color-codes all trials in red/green for negative or positive responses. 
     // By default, nothing is plotted.
 
+    // % Copyright (c) 1996-2018 Denis Pelli
 
     // if nargin < 3
     //     error('Usage: response=QuestSimulate(q,tTest,tActual[,plotIt])')
     // end
+    if (typeof q === 'undefined' || typeof tTest === 'undefined' || typeof tActual === 'undefined'){
+        alert('Usage: response=QuestSimulate(q,tTest,tActual[,plotIt])')
+    }
 
     // if length(q)>1
     //     error('can''t deal with q being a vector')
@@ -757,23 +789,18 @@ function QuestSimulate(q,tTest,tActual,plotIt){
     const x2min = min_of_array(q.x2)
     const x2max = max_of_array(q.x2)
     const t = Math.min(Math.max(tTest-tActual, x2min), x2max); // scalar
-    // console.log(t)
 
     // response=interp1(q.x2,q.p2,t) > rand(1);
-    // const response = numeric.spline(q.x2, q.p2).at(t).map(y => y > rand(1))
-    // const flag = numeric.spline(q.x2, q.p2).at(t) > Math.random() // true or false
     const flag = interp1(q.x2, q.p2, [t])[0] > Math.random() // true or false
     const response = flag? 1:0
 
     // % Visualize if requested:
     // if (nargin >= 4) && (plotIt > 0)
     if (typeof plotIt !== 'undefined' && plotIt > 0){
-        // console.log(t)
-        // console.log(response)
         // tc = t;
         // col = {'*r', '*g'};
         const tc = t;
-        // col = {'*r', '*g'};
+        const col = ['RGBA(255, 0, 0, 1)', 'RGBA(0, 128, 0, 1)']
 
         // t = min(max(q.intensity(1:q.trialCount) - tActual, x2min), x2max);
         const tmp = numeric.sub(q.intensity.slice(0, q.trialCount), tActual)
@@ -800,7 +827,6 @@ function QuestSimulate(q,tTest,tActual,plotIt){
             pcol = 'RGBA(0, 0, 0, 1)'
         }
         
-        // pending tcの描画
         // plot(q.x2 + tActual, q.p2, 'b', ...
         //     t(positive) + tActual, interp1(q.x2,q.p2,t(positive)), pcol, ...
         //     t(negative) + tActual, interp1(q.x2,q.p2,t(negative)), 'or', ...
@@ -811,6 +837,16 @@ function QuestSimulate(q,tTest,tActual,plotIt){
         if (document.getElementById('simulate_canvas') === null) {
             const canvas_element = document.createElement('canvas');
             canvas_element.id = 'simulate_canvas';
+            if (typeof chart_width === 'undefined') {
+                canvas_element.width = 800
+            } else {
+                canvas_element.width = chart_width
+            } 
+            if (typeof chart_height === 'undefined') {
+                canvas_element.height = 600
+            } else {
+                canvas_element.height = chart_height
+            }
             document.body.appendChild(canvas_element)
         } 
 
@@ -823,8 +859,13 @@ function QuestSimulate(q,tTest,tActual,plotIt){
             })
         }
 
-        // console.log(positive)
-        // console.log(t)
+        const graph_data = []
+        graph_data.push({
+            label: 'Psychometric function',
+            data: weibull,
+            backgroundColor: 'RGBA(225,95,150, 1)',
+        })
+
         const positive_data = []
         const positive_x = get_array_using_index(t2, positive)
         for (let i = 0; i < positive.length; i++){
@@ -835,17 +876,78 @@ function QuestSimulate(q,tTest,tActual,plotIt){
             })
         }
 
-        // console.log(positive_data)
-
         const negative_data = []
-        const negative_x = get_array_using_index(t2, negative)
-        for (let i = 0; i < negative.length; i++){
-            negative_data.push({
-                x: negative_x[i] + tActual,
-                // y: numeric.spline(q.x2, q.p2).at(negative_x[i])
-                y: interp1(q.x2, q.p2, [negative_x[i]])[0] 
+        if (plotIt === 2){
+            const negative_x = get_array_using_index(t2, negative)
+            for (let i = 0; i < negative.length; i++){
+                negative_data.push({
+                    x: negative_x[i] + tActual,
+                    // y: numeric.spline(q.x2, q.p2).at(negative_x[i])
+                    y: interp1(q.x2, q.p2, [negative_x[i]])[0] 
+                })
+            }
+
+            graph_data.push({
+                label: 'Positive',
+                data: positive_data,
+                backgroundColor: pcol,
+                pointBorderColor: pcol,
+                pointStyle: 'star',
+                pointBorderWidth: 2,
+                pointRadius: 10,
+                pointRotation: 45,
+            })
+
+            graph_data.push({
+                label: 'Negative',
+                data: negative_data,
+                backgroundColor: 'RGBA(255, 0, 0, 1)',
+                pointBorderColor: 'RGBA(255, 0, 0, 1)',
+                pointStyle: 'star',
+                pointBorderWidth: 2,
+                pointRadius: 10,
+                pointRotation: 45,
+            })
+        } else {
+            graph_data.push({
+                label: 'Responses',
+                data: positive_data,
+                backgroundColor: pcol,
+                pointBorderColor: pcol,
+                pointStyle: 'star',
+                pointBorderWidth: 2,
+                pointRadius: 10,
+                pointRotation: 45,
             })
         }
+
+        graph_data.push({
+            label: 'tActual',
+            data: [{
+                x: tActual, 
+                // y: numeric.spline(numeric.add(q.x2, tActual) , q.p2).at(tActual)
+                y: interp1(numeric.add(q.x2, tActual), q.p2, [tActual])[0] 
+            }],
+            backgroundColor: 'RGBA(255, 0, 255, 1)',
+            pointBorderColor: 'RGBA(255, 0, 255, 1)',
+            pointStyle: 'circle',
+            pointBorderWidth: 2,
+            pointRadius: 10,
+            pointRotation: 45,
+        },
+        {
+            label: 'The latest repsonse (Circle)',
+            data: [{
+                x: tc + tActual, 
+                y: interp1(q.x2, q.p2, [tc])[0] 
+            }],
+            backgroundColor: col[response],
+            pointBorderColor: col[response],
+            pointStyle: 'circle',
+            // pointBorderWidth: 2,
+            pointRadius: 10,
+            // pointRotation: 45,
+        })
 
         if (typeof simulate_chart !== 'undefined') {
             simulate_chart.destroy()
@@ -855,95 +957,16 @@ function QuestSimulate(q,tTest,tActual,plotIt){
         simulate_chart = new Chart(ctx, {
             type: 'scatter',
             data: {
-                datasets: [
-                    {
-                        label: 'Psychometric function',
-                        data: weibull,
-                        backgroundColor: 'RGBA(225,95,150, 1)',
-                    },
-                    {
-                        label: 'Positive',
-                        data: positive_data,
-                        backgroundColor: pcol,
-                        pointBorderColor: pcol,
-                        pointStyle: 'star',
-                        pointBorderWidth: 2,
-                        pointRadius: 10,
-                        pointRotation: 45,
-                    },
-                    {
-                        label: 'Negative',
-                        data: negative_data,
-                        backgroundColor: 'RGBA(255, 0, 0, 1)',
-                        pointBorderColor: 'RGBA(255, 0, 0, 1)',
-                        pointStyle: 'star',
-                        pointBorderWidth: 2,
-                        pointRadius: 10,
-                        pointRotation: 45,
-                    },
-                    {
-                        label: 'tActual',
-                        data: [{
-                            x: tActual, 
-                            // y: numeric.spline(numeric.add(q.x2, tActual) , q.p2).at(tActual)
-                            y: interp1(numeric.add(q.x2, tActual), q.p2, [tActual])[0] 
-                        }],
-                        backgroundColor: 'RGBA(0, 0, 0, 1)',
-                        // boarderColor: 'RGBA(255, 0, 0, 1)',
-                        pointBorderColor: 'RGBA(0, 0, 0, 1)',
-                        // pointBackgroundColor: 'RGBA(255, 0, 0, 1)',
-                        pointStyle: 'cross',
-                        pointBorderWidth: 2,
-                        pointRadius: 10,
-                        pointRotation: 45,
-                    }
-                
-                ]
+                datasets: graph_data
             },
             options: {
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestSimulate.'
-                }
+                },
+                responsive: false
             }
-        })
-        // const myChart = new Chart(ctx, {
-        //     type: 'bar',
-        //     data: {
-        //         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        //         datasets: [{
-        //             label: '# of Votes',
-        //             data: [12, 19, 3, 5, 2, 3],
-        //             backgroundColor: [
-        //                 'rgba(255, 99, 132, 0.2)',
-        //                 'rgba(54, 162, 235, 0.2)',
-        //                 'rgba(255, 206, 86, 0.2)',
-        //                 'rgba(75, 192, 192, 0.2)',
-        //                 'rgba(153, 102, 255, 0.2)',
-        //                 'rgba(255, 159, 64, 0.2)'
-        //             ],
-        //             borderColor: [
-        //                 'rgba(255, 99, 132, 1)',
-        //                 'rgba(54, 162, 235, 1)',
-        //                 'rgba(255, 206, 86, 1)',
-        //                 'rgba(75, 192, 192, 1)',
-        //                 'rgba(153, 102, 255, 1)',
-        //                 'rgba(255, 159, 64, 1)'
-        //             ],
-        //             borderWidth: 1
-        //         }]
-        //     },
-        //     options: {
-        //         scales: {
-        //             yAxes: [{
-        //                 ticks: {
-        //                     beginAtZero: true
-        //                 }
-        //             }]
-        //         }
-        //     }
-        // });
-        
+        })        
     }
     return response
 }
@@ -958,6 +981,9 @@ function QuestUpdate(q, intensity, response){
     // if nargin~=3
     //     error('Usage: q=QuestUpdate(q,intensity,response)')
     // end
+    if (typeof q === 'undefined' || typeof intensity === 'undefined' || typeof response === 'undefined'){
+        alert('Usage: q=QuestUpdate(q,intensity,response)')    
+    }
 
     // if length(q)>1
     //     error('Can''t deal with q being a vector.')
@@ -970,11 +996,12 @@ function QuestUpdate(q, intensity, response){
     //     error(sprintf('QuestUpdate: intensity %s must be real, not complex.',num2str(intensity)));
     // end
 
-    // pending
     // if response<0 || response>=size(q.s2,1)
     //     error(sprintf('response %g out of range 0 to %d',response,size(q.s2,1)-1))
     // end
-    // if (response < 0 || )
+    if (response < 0 || response > q.s2.length-1){
+        alert(`response ${response} out of range 0 to ${q.s2.length-1}`)
+    }
 
 
     if (q.updatePdf){
@@ -982,12 +1009,9 @@ function QuestUpdate(q, intensity, response){
         const large_num = Math.pow(10, 10)
         const inten = Math.max(-1*large_num, Math.min(large_num, intensity)); // make intensity finite
             
-        // console.log(inten)
         // ii=size(q.pdf,2)+q.i-round((inten-q.tGuess)/q.grain);
         const tmp = q.pdf.length - Math.round((inten - q.tGuess)/q.grain)
         let ii = numeric.add(tmp, q.i)
-        // console.log(ii[0])
-        // console.log(ii[ii.length-1])
 
         // if ii(1)<1 || ii(end)>size(q.s2,2)
         if (ii[0] < 1 || ii[ii.length-1] > numeric.dim(q.s2)[1]){
@@ -1017,10 +1041,8 @@ function QuestUpdate(q, intensity, response){
                 ii = numeric.sub(tmp, ii[ii.length-1])
             }
         }
-        // console.log(ii)
 
         // q.pdf=q.pdf.*q.s2(response+1,ii); % 4 ms
-        console.log(response)
         q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[response], ii))
         // if q.normalizePdf
         // 	q.pdf=q.pdf/sum(q.pdf);		% keep the pdf normalized	% 3 ms
@@ -1060,6 +1082,7 @@ function QuestMean(q){
     // % Get the mean threshold estimate.
     // % If q is a vector, then the returned t is a vector of the same size.
     // % 
+    // % Copyright (c) 1996-2002 Denis Pelli
 
     // if nargin~=1
     //     error('Usage: t=QuestMean(q)')
@@ -1068,8 +1091,6 @@ function QuestMean(q){
         alert('Usage: t=QuestMean(q)')
     }
     
-    // console.log(q.length)
-    // console.log(Array.isArray(q))
     // if length(q)>1
     //     t=zeros(size(q));
     //     for i=1:length(q(:))
@@ -1097,6 +1118,7 @@ function QuestSd(q){
     // % Get the sd of the threshold distribution.
     // % If q is a vector, then the returned t is a vector of the same size.
     // % 
+    // % Copyright (c) 1996-1999 Denis Pelli
 
     // if nargin~=1
     //     error('Usage: sd=QuestSd(q)')
@@ -1157,6 +1179,7 @@ function QuestMode(q){
     // % "t" is the mode threshold estimate
     // % "p" is the value of the (unnormalized) pdf at t.
     // % 
+    // % Copyright (c) 1996-2004 Denis Pelli
 
     // if nargin~=1
     //     error('Usage: t=QuestMode(q)')
@@ -1200,6 +1223,9 @@ function QuestBetaAnalysis(q){
     // Without normalization, the pdf tends to underflow at around 1000 trials. 
     // You will have some warning of this because the printout mentions any values of beta that were dropped because they had zero probability. 
     // Thus you should keep the number of trials under around 1000, to avoid the zero-probability warnings.
+
+    // % Denis Pelli 5/6/99
+
 
 
     // if nargin<1 || nargin>2
@@ -1264,7 +1290,6 @@ function QuestBetaAnalysis1(q){
     }
 
     const qq = QuestRecompute(q2);
-    console.log(qq)
 
     // % omit betas that have zero probability
     // for i=1:length(qq)
@@ -1274,7 +1299,6 @@ function QuestBetaAnalysis1(q){
     for (let i =0; i < qq.length; i++){
         p.push(numeric.sum(qq[i].pdf))
     }
-    console.log(p)
 
     // if any(p==0)
     //     fprintf('Omitting beta values ');
@@ -1292,11 +1316,9 @@ function QuestBetaAnalysis1(q){
     // q2=qq(find(p));
     // Changed the name of the variable from q2 to q3 to avoid confusion
     const q3 = get_array_using_index(qq, find_non_zero_index(p))
-    console.log(q3)
 
     // t2=QuestMean(q2); % estimate threshold for each possible beta
     const t2 = QuestMean(q3)
-    console.log(t2)
 
     // p2=QuestPdf(q2,t2); % get probability of each of these (threshold,beta) combinations
     const p2 = QuestPdf(q3, t2);
@@ -1316,22 +1338,21 @@ function QuestBetaAnalysis1(q){
     // % 	fprintf(f,'sd   ');fprintf(f,'	%7.2f',sd2);fprintf(f,'\n');
     // % 	fprintf(f,'log p');fprintf(f,'	%7.2f',log10(p2));fprintf(f,'\n');
     // % end
-    console.log(`beta =`);
-    console.log(beta2);
-    console.log(`t =`);
-    console.log(t2);
-    console.log(`sd =`);
-    console.log(sd2);
-    const log_data = []
-    for (let i = 0; i < p2.length; i++){
-        log_data.push(Math.log10(p2[i]))
-    }
-    console.log(`log10 p =`);
-    console.log(log_data);
+    // console.log(`beta =`);
+    // console.log(beta2);
+    // console.log(`t =`);
+    // console.log(t2);
+    // console.log(`sd =`);
+    // console.log(sd2);
+    // const log_data = []
+    // for (let i = 0; i < p2.length; i++){
+    //     log_data.push(Math.log10(p2[i]))
+    // }
+    // console.log(`log10 p =`);
+    // console.log(log_data);
 
     // [p,i]=max(p2); % take mode, i.e. the most probable (threshold,beta) combination
     const maximum = max_with_index(p2)
-    // console.log(maximum)
 
     // t=t2(i); % threshold at that mode
     const t = t2[maximum.index]
@@ -1349,14 +1370,12 @@ function QuestBetaAnalysis1(q){
     const tmp1 = numeric.mul(p2, beta2)
     const tmp2 = numeric.sum(tmp1)
     const betaMean = numeric.div(tmp2, tmp_p)
-    console.log(`betaMean = ${betaMean}`)
 
     // betaSd=sqrt(sum(p2.*beta2.^2)/p-(sum(p2.*beta2)/p).^2);
     const tmp3 = numeric.mul(p2, numeric.pow(beta2, 2))
     const tmp4 = numeric.div(numeric.sum(tmp3), tmp_p)
     const tmp5 = numeric.pow(betaMean, [2])
     const betaSd = numeric.sqrt(numeric.sub(tmp4, tmp5))[0]
-    console.log(`betaSd = ${betaSd}`)
 
     // beta has a very skewed distribution, with a long tail out to very large value of beta, whereas 1/beta is more symmetric, with a roughly normal distribution. 
     // Thus it is statistically more efficient to estimate the parameter as 1/average(1/beta) than as average(beta). 
@@ -1366,14 +1385,12 @@ function QuestBetaAnalysis1(q){
 
     // iBetaMean=sum(p2./beta2)/p;
     const iBetaMean = numeric.div(numeric.sum(numeric.div(p2, beta2)), tmp_p)
-    console.log(`iBetaMean = ${iBetaMean}`)
 
     // iBetaSd=sqrt(sum(p2./beta2.^2)/p-(sum(p2./beta2)/p).^2);
     const tmp6 = numeric.div(p2, numeric.pow(beta2, 2))
     const tmp7 = numeric.div(numeric.sum(tmp6), tmp_p)
     const tmp8 = numeric.pow(iBetaMean, [2])
     const iBetaSd = numeric.sqrt(numeric.sub(tmp7, tmp8))
-    console.log(`iBetaSd = ${iBetaSd}`)
 
     // for f=fid
     //     %	fprintf(f,'Threshold %4.2f +- %.2f; Beta mode %.1f mean %.1f +- %.1f imean 1/%.1f +- %.1f; Gamma %.2f\n',t,sd,q2(i).beta,betaMean,betaSd,1/iBetaMean,iBetaSd,q.gamma);
@@ -1381,6 +1398,7 @@ function QuestBetaAnalysis1(q){
     //     fprintf(f,'%5.2f	%5.2f	%4.1f	%4.1f	%6.3f\n',t,sd,1/iBetaMean,betaSd,q.gamma);
     // end
     console.log(`Threshold ${round2(t, 2)} +- ${round2(sd, 2)}`)
+    console.log(`beta = ${1/iBetaMean}`)
     console.log(`Beta mode ${q3[maximum.index].beta} mean ${round2(betaMean, 2)} +- ${round2(betaSd, 2)}`)
     console.log(`imean 1/${round2(1/iBetaMean, 2)} +- ${round2(iBetaSd, 2)}`)
     console.log(`Gamma ${q.gamma} `)
@@ -1398,6 +1416,7 @@ function QuestPdf(q,t){
     // % The (possibly unnormalized) probability density of candidate threshold "t".
     // % q and t may be vectors of the same size, in which case the returned p is a vector of that size.
     // % 
+    // % Copyright (c) 1996-1999 Denis Pelli
 
     // if nargin~=2
     //     error('Usage: p=QuestPdf(q,t)')
@@ -1447,6 +1466,7 @@ function QuestP(q,x){
     // % The probability of a correct (or yes) response at intensity x, assuming
     // % threshold is at x=0.
     // %
+    // % Copyright (c) 1996-2004 Denis Pelli
 
     // pending
     // JavaScript does not have a isreal function.
@@ -1501,6 +1521,8 @@ function QuestTrials(q, binsize){
     // % 		t=QuestTrials(q,0.1);
     // % 		fprintf(' intensity     p fit         p    trials\n');
     // % 		disp([t.intensity; QuestP(q,t.intensity-logC); (t.responses(2,:)./sum(t.responses)); sum(t.responses)]');
+    
+    // % Copyright (c) 1996-1999 Denis Pelli
 
     // if nargin < 1
     //     error('Usage: trial=QuestTrials(q,[binsize])')
@@ -1550,13 +1572,9 @@ function QuestTrials(q, binsize){
     // [intensity,i]=sort(inIntensity);
     // response(1:length(i))=inResponse(i);
     const intensity = q.intensity.slice(0, q.trialCount);
-    // console.log(intensity)
     intensity.sort(compareFunc)
-    console.log(intensity)
     const index = indexSort(q.intensity.slice(0, q.trialCount))
-    console.log(index)
     const response = q.response.slice(0, q.trialCount);
-    console.log(response)
 
     // % quantize
     // if binsize>0
@@ -1568,7 +1586,6 @@ function QuestTrials(q, binsize){
         const tmp2 = numeric.round(tmp1)
         intensity2 = numeric.mul(tmp2, binsize)
     }
-    console.log(intensity2)
 
     // % compact
     // j=1;
