@@ -16,7 +16,7 @@ Users of jsPsych should run [jsPsychDemo/jsQUEST_jsPsychDemo.html](https://www.h
 - Using [the numeric](https://github.com/sloisel/numeric), it is possible to perform matrix/array calculations at high speed.
 - [The interp1 function](https://www.npmjs.com/package/interp1) is used for 1-D data interpolation. [GitHub page](https://github.com/Symmetronic/interp1).
 - [Chart.js](https://www.chartjs.org/) is used for drawing graphs. [GitHub page](https://github.com/chartjs/Chart.js)
-- I introduce [StaircaseJS] although it is not used in jsQUEST.
+- I introduce [StaircaseJS](https://github.com/hadrienj/StaircaseJS) although it is not used in jsQUEST.
 
 ## Memo
 At first, I tried to use the numeric.spline function instead of the interp1 function. However, I was not able to get the proper xThreshold under the following conditions:
