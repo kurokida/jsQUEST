@@ -4,7 +4,9 @@ The goal of this project is to run [QUEST distributed as a part of Psychtoolbox]
 
 The files published here are translated from MATLAB files written by [Professor Denis Pelli](https://as.nyu.edu/faculty/denis-pelli.html) to JavaScript files. Almost all of the MATLAB code is commented out in each JavaScript file. The usage of each function is the same as that of MATLAB functions. So, you can refer to the help of Psychtoolbox.
 
-Users of jsPsych should run [jsPsychDemo/jsQUEST_jsPsychDemo.html](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). Otherwise, please run [jsQuestDemo.html](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsQuestDemo.html).
+Please run [jsPsychDemo/jsQUEST_jsPsychDemo.html](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). You will see that the peak of the posterior probability density function (PDF) gets closer to the truth value as you run more trials. This demo program is combined with [jsPsych](https://www.jspsych.org/).
+ 
+[jsQuestDemo.html](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsQuestDemo.html) does not use the jsPsych library. The results of all simulations are viewed in a JavaScript console window. If you are not a jspsych user, this demo may be more useful for you.
 
 ## Important changes from Psychtoolbox
 - QuestBetaAnalysis does not support outputting to a file.
