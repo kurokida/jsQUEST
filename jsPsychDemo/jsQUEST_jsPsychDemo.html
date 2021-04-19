@@ -40,17 +40,16 @@
         preamble: `<p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
             <p>First, you need to specify some parameters. See below for details.</p>
             <p>If you have no problem with the default values, leave them blank.</p>
-            <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, 
-            which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, 
-            using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p><hr>`,
+            <p>The original <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a> is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>.</p>
+            <p>The program you're about to run is a rewrite of the original one using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p><hr>`,
         questions: [
-            {prompt: `A threshold you want to know in this experiment: tActual (Default: -2)`, name: `tActual`, columns: 20},
+            {prompt: `The actual (true) threshold you want to know in this simulation: tActual (Default: -2)`, name: `tActual`, columns: 20},
             {prompt: `Your guess about the threshold: tGuess (Default: -1)`, name: `tGuess`, columns: 20},
             {prompt: `Your guess about the standard deviation of the threshold: tGuessSd (Default: 2)`, name: `tGuessSd`, columns: 20},
             {prompt: `Threshold criterion expressed as probability: pThreshold (Default: 0.82)`, name: `pThreshold`, columns: 20},
-            {prompt: `The parameters of a Weibull psychometric function: Beta (Default: 3.5)`, name: `beta`, columns: 20},
-            {prompt: `The parameters of a Weibull psychometric function: Delta (Default: 0.01)`, name: `delta`, columns: 20},
-            {prompt: `The parameters of a Weibull psychometric function: Gamma (Default: 0.5)`, name: `gamma`, columns: 20},
+            {prompt: `The parameters of a Weibull psychometric function: Beta (Default: 3.5). <br>The slope of the psychometric function.`, name: `beta`, columns: 20},
+            {prompt: `The parameters of a Weibull psychometric function: Delta (Default: 0.01). <br>The probability of making mistakes by participants at intensities significantly greater than the threshold.`, name: `delta`, columns: 20},
+            {prompt: `The parameters of a Weibull psychometric function: Gamma (Default: 0.5). <br>The probability of a success at zero intensity.`, name: `gamma`, columns: 20},
             {prompt: `How many times to simulate. (Default: 10)`, name: `trialsDesired`, columns: 20}
         ],
         on_finish(data){
@@ -73,19 +72,28 @@
         stimulus: '',
         choices: ['Next trial'],
         on_start(trial){
-            const tTest = QuestQuantile(myquest);	// % Recommended by Pelli (1987), and still our favorite.
-            const response = QuestSimulate(myquest, tTest, tActual, plotIt, chart_width, chart_height);
-            let response_type = 'negative'
-            if (response === 1) response_type = 'positive'
+            let graph_title = 'Posterior PDF'
 
-            // % Update the pdf
-            myquest = QuestUpdate(myquest, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+            if (trial_num === 0){
+                trial.stimulus = `<p>This is the prior probability density function (pdf) of threshold based on your predictions.</P>`
+                trial.choices = [`Let's start the simulation!`]
+                graph_title = 'The first prior PDF'
+            } else {
+                const tTest = QuestQuantile(myquest);	// % Recommended by Pelli (1987), and still our favorite.
+                const response = QuestSimulate(myquest, tTest, tActual, plotIt, chart_width, chart_height);
+                let response_type = 'negative'
+                if (response === 1) response_type = 'positive'
 
-            trial.stimulus = `<p>Trial = ${trial_num + 1}/${trialsDesired}</p>
-                <p>Intensity = ${Math.round(tTest*10)/10}</p><p>The response by the simulator is ${response_type}</p>`
+                // % Update the pdf
+                myquest = QuestUpdate(myquest, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
 
-            // For drawing the pdf graph
-            // Chart.js: https://www.chartjs.org/
+                trial.stimulus = `<p>Simulation trial = ${trial_num}/${trialsDesired}</p>
+                    <p>Intensity = ${Math.round(tTest*10)/10}</p><p>The response by the simulator is ${response_type}</p>`
+            }
+
+
+            // The following code is related to drawing graphs, so you don't necessarily need to understand it to use QUEST, 
+            // Start drawing the graph using Chart.js: https://www.chartjs.org/
             if (document.getElementById('posterior_chart') === null) {
                 const canvas_element = document.createElement('canvas');
                 canvas_element.id = 'posterior_chart';
@@ -114,7 +122,7 @@
                 data: {
                     datasets: [
                         {
-                            label: `Trial: ${trial_num + 1}`,
+                            label: `Trial: ${trial_num}`,
                             data: mydata,
                             backgroundColor: 'rgba(22, 54, 235, 1)',
                         }                
@@ -124,18 +132,19 @@
                 options: {
                     title: {
                         display: true,
-                        text: 'Posterior PDF'
+                        text: graph_title
                     },
                     responsive: false
                 }
             })
+            // Finish drawing the graph.
         }
     }
 
     const loop_node = {
         timeline: [trial],
         loop_function: function(data){
-            if (trial_num < trialsDesired-1){
+            if (trial_num < trialsDesired){
                 trial_num++
                 return true
             } else {
