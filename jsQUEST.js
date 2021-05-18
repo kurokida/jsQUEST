@@ -365,12 +365,12 @@ function QuestRecompute(q, plotIt, chart_width, chart_height){
         if (document.getElementById('recompute_canvas') === null) {
             const canvas_element = document.createElement('canvas');
             canvas_element.id = 'recompute_canvas';
-            if (chart_width === 'undefined') {
+            if (typeof chart_width === 'undefined') {
                 canvas_element.width = 800
              } else{
                 canvas_element.width = chart_width
              } 
-            if (chart_height === 'undefined') {
+            if (typeof chart_height === 'undefined') {
                 canvas_element.height = 600
              } else {
                  canvas_element.height = chart_height
@@ -407,6 +407,24 @@ function QuestRecompute(q, plotIt, chart_width, chart_height){
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestRecompute.'
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Stimulus intensity (Log scale)'
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Probability'
+                            }
+                        }
+                    ]
                 },
                 responsive: false
             }
@@ -455,12 +473,12 @@ function QuestRecompute(q, plotIt, chart_width, chart_height){
         if (document.getElementById('recompute_canvas2') === null) {
             const canvas_element = document.createElement('canvas');
             canvas_element.id = 'recompute_canvas2';
-            if (chart_width === 'undefined') {
+            if (typeof chart_width === 'undefined') {
                 canvas_element.width = 800
              } else{
                 canvas_element.width = chart_width
              } 
-            if (chart_height === 'undefined') {
+            if (typeof chart_height === 'undefined') {
                 canvas_element.height = 600
              } else {
                  canvas_element.height = chart_height
@@ -497,6 +515,24 @@ function QuestRecompute(q, plotIt, chart_width, chart_height){
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestRecompute.'
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Stimulus intensity (Log scale)'
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Probability'
+                            }
+                        }
+                    ]
                 },
                 responsive: false
             }
@@ -966,6 +1002,24 @@ function QuestSimulate(q,tTest,tActual,plotIt, chart_width, chart_height){
                 title: {
                     display: true,
                     text: 'Psychometric function by QuestSimulate.'
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Stimulus intensity (Log scale)'
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Probability'
+                            }
+                        }
+                    ]
                 },
                 responsive: false
             }

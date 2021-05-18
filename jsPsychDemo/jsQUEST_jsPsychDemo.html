@@ -64,6 +64,7 @@
             if (data.response.tActual !== "") tActual = Number(data.response.tActual)
 
             myquest = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+            // myquest = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, undefined, undefined, 2);
         }
     };
 
@@ -133,6 +134,24 @@
                     title: {
                         display: true,
                         text: graph_title
+                    },
+                    scales: {
+                        xAxes: [
+                            {
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Stimulus intensity (Log scale)'
+                                }
+                            }
+                        ],
+                        yAxes: [
+                            {
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Probability'
+                                }
+                            }
+                        ]
                     },
                     responsive: false
                 }
