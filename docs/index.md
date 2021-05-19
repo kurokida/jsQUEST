@@ -1,12 +1,14 @@
 # jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
 
-Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. Watson and Pelli (1983) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of QUEST into JavaScript to use in online experiments.
+Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. Watson and Pelli (1983) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
 
-# A psychometric function which assumes the Weibull distribution. 
+# A psychometric function assuming the Weibull distribution. 
 
 Figure 1 shows a psychophysical function which assumes the Weibull distribution. You can also see this graph in [the demo](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). 
 
 ![Weibull](./images/Weibull_function.png)
+
+*Figure 1. A psychophysical function assuming the Weibull distribution.*
 
 This graph has been drawn using the following default values:
 
@@ -24,7 +26,7 @@ You'll see that the probability has changed from 0.5 to 1.0 in about one tick at
 
 # Stimulus intensity
 
-Before beggining the experiment, the experimenter needs to determine what the intensity of the stimulus is. For example, it could be the luminance/color contrast, size, length, or number of dots. If you are interested in the Müller-Lyer illusion, the stimulus intensity might be the ratio of the two lines. The experimenter is free to determine the intensity of the stimulus as long as it is considered to fit the psychophysical function.
+Before beggining an experiment, the experimenter needs to determine what the intensity of the stimulus is. For example, it could be the luminance, color, size, length, spatial/temporal frequency, or number of dots. The experimenter is free to determine the intensity of the stimulus as long as it is considered to fit the psychophysical function.
 
 # Threshold criterion expressed as probability (pThreshold)
 
@@ -32,7 +34,7 @@ Specify the probability that the experimenter is interested in. It is convention
 
 # Guess the threshold (tGuess)
 
-Estimate of the stimulus intensity that is expected to result in a response rate of pThreshold. The default is -1. Given that the x-axis is the log scale, the default means 10^(-1) = 0.1. The symbol "^" means a power in this document.
+Estimate of the stimulus intensity that is expected to result in a response rate of pThreshold. The default is -1. Given that the x-axis is the log scale, the default means 10^(-1) = 0.1. The units are arbitrary. The symbol "^" means a power in this document.
 
 # How to use jsQUEST
 
@@ -57,7 +59,8 @@ The procedure of QUEST is easy to understand when the intensity of the stimulus 
 ## Update the PDF
 
 ```javascript
-myquest = QuestUpdate(myquest, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+myquest = QuestUpdate(myquest, tTest, response); 
+// % Add the new datum (actual test intensity and observer response) to the database.
 ```
 
 Update the PDF of thresholds by specifing the current/latest stimulus intensity (tTest) and the response (YES/SUCCESS = 1 or NO/FAILURE = 0). The tTest is not necessarily the value suggested by QUEST. For example, there may be upper and lower limits of the stimulus intensity. If QUEST proposes a value that exceeds these limits, it can be changed to an appropriate value. The important thing is to update the PDF with the actual stimulus intensity (tTest) and the response.
@@ -98,3 +101,8 @@ There is no difference in usage between the MATLAB and JavaScript versions excep
 - QuestMode returns an object with the 'mode' and 'pdf' properties.
 - QuestRecompute takes the third and fourth arguments. The third argument means the width of the chart, and the forth argument means the height of the chart.
 - QuestSimulate takes the fifth and sixth arguments. The fifth argument means the width of the chart, and the sixth argument means the height of the chart.
+
+# References
+
+- [King-Smith, P. E., Grigsby, S. S., Vingrys, A. J., Benes, S. C., & Supowit, A. (1994). Efficient and unbiased modifications of the QUEST threshold method: Theory, simulations, experimental evaluation and practical implementation. Vision Research, 34(7), 885–912. ](https://doi.org/10.1016/0042-6989(94)90039-6)
+- [Watson, A. B., & Pelli, D. G. (1983). Quest: A Bayesian adaptive psychometric method. Perception & Psychophysics, 33(2). ](https://doi.org/10.3758/BF03202828)
