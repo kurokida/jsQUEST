@@ -20,9 +20,11 @@ This graph has been drawn using the following default values:
 - The parameters of a Weibull psychometric function: Delta (Default: 0.01). The probability of making mistakes by participants at intensities significantly greater than the threshold.
 - The parameters of a Weibull psychometric function: Gamma (Default: 0.5). The probability of a success (a response of YES) at zero intensity.
 
-Note that the x-axis is the log scale. The pink circle represents the actual threshold (tActual). The experimenter does not usually know the value, and wants to know it by conducting the experiment. The tActual is used only for simulation, and is not necessarily required to run QUEST. The tGuess determines the horizontal position of the psychometric function, while the Beta, Delta, and Gamma determines the shape of the psychometric function. The tGuessSd affects the probability density function (PDF) of thresholds.
+The pink circle represents the actual threshold (tActual). The experimenter does not usually know the value, and wants to know it by conducting the experiment. The tActual is used only for simulation, and is not necessarily required to run QUEST. 
 
-You'll see that the probability has changed from 0.5 to 1.0 in about one tick at the x-axis (log scale) in Figure 1. In other words, when observers see a stimulus that is about 10 times more intense than the stimulus that results in a 50 % correct response rate, they will give a 100 % correct response. By using the default values (Beta = 3.5, Delta = 0.01, Gamma = 0.5), the experimenter is assuming such a psychophysical function.
+The tGuess determines the horizontal position of the psychometric function, while the Beta, Delta, and Gamma determines the shape of the psychometric function. The tGuessSd affects the probability density function (PDF) of thresholds.
+
+The probability of correct/YES answers is about 0.5 at (A) the x-axis of -2.5, and is about 1.0 at (B) the x-axis of -1.5. The intensity of (B) is 10 times larger than that of (A) because the x-axis is the log scale. By using the default values (Beta = 3.5, Delta = 0.01, Gamma = 0.5), the experimenter is assuming such a psychophysical function.
 
 # Stimulus intensity
 
@@ -52,9 +54,9 @@ The QuestQuantile function returns a suggestion of stimulus intensity for the ne
 const tTest = QuestQuantile(myquest);	
 ```
 
-If the default values are used, the first call of QuestQuantile returns -0.65. Note that the difference between the returned value (-0.65) and tGuess(-1) is 0.35. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of the tGuess (the intensity of the first stimulus) for the next trial. As long as the same Beta, Delta, and Gamma are used the difference between the returned value and tGuess will be about 0.35, no matter what the value of tGuess is.
+If the default values are used, the first call of the QuestQuantile function returns -0.65. Note that the difference between the returned value (-0.65) and tGuess(-1) is 0.35. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of the tGuess for the first trial. As long as the same Beta, Delta, and Gamma are used the difference between the first returned value and tGuess will be about 0.35, no matter what the value of tGuess is.
 
-The procedure of QUEST is easy to understand when the intensity of the stimulus is on a log scale, e.g. dB, while in other cases I recommend to think of it as follows. For example, if the experimenter predicts that the stimulus intensity of 150 pixels will result in a response rate of pThreshold (0.82), then tGuess should be log10(150) = 2.18. If the default values regarding Beta, Delta, and Gamma are used, the first call of QuestQuantile returns 2.53. Note that the difference between the returned value (2.18) and tGuess(2.53) is 0.35. This is the same as when tGuess is -1. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity. The intensity can be calculated in one of two ways: (a) 150 * 2.24, or (b) 10^(2.53). The results of the two formulas are almost identical (about 338 pixels).
+The procedure of QUEST is easy to understand when the intensity of the stimulus is on a log scale, e.g. dB, while in other cases I recommend to think of it as follows. For example, if the experimenter predicts that the stimulus intensity of 150 pixels will result in a response rate of pThreshold (0.82), then tGuess should be log10(150) = 2.18. If the default values regarding Beta, Delta, and Gamma are used, the first call of QuestQuantile returns 2.53. Note that the difference between the returned value (2.18) and tGuess(2.53) is 0.35. This is the same as when tGuess is -1. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of tGuess. The intensity can be calculated in one of the two ways: (a) 150 * 2.24, or (b) 10^(2.53). The results of the two formulas are almost identical (about 338 pixels).
 
 ## Update the PDF
 
@@ -63,11 +65,11 @@ myquest = QuestUpdate(myquest, tTest, response);
 // % Add the new datum (actual test intensity and observer response) to the database.
 ```
 
-Update the PDF of thresholds by specifing the current/latest stimulus intensity (tTest) and the response (YES/SUCCESS = 1 or NO/FAILURE = 0). The tTest is not necessarily the value suggested by QUEST. For example, there may be upper and lower limits of the stimulus intensity. If QUEST proposes a value that exceeds these limits, it can be changed to an appropriate value. The important thing is to update the PDF with the actual stimulus intensity (tTest) and the response.
+Update the PDF of thresholds by specifing the current stimulus intensity (tTest) and the response (YES/SUCCESS = 1 or NO/FAILURE = 0). The tTest is not necessarily the value suggested by QUEST. For example, there may be upper and lower limits of the stimulus intensity. If QUEST proposes a value that exceeds these limits, it can be changed to an appropriate value. The important thing is to update the PDF with the actual stimulus intensity (tTest) and the response.
 
 ## Termination rules
 
-Watson and Pelli (1983) recommended to stop updating (a) when a confidence interval for the location of threshold is smaller than a specified size, or (b) after a fixed number of trials. Pelli also suggests to update the PDF 40 times in his demo program.
+Watson and Pelli (1983) recommended to stop updating (a) when a confidence interval for the location of threshold is smaller than a specified size, or (b) after a fixed number of trials. Pelli's demo program (QuestDemo.m) updates the PDF 40 times.
 
 ## Estimate of the threshold
 
@@ -80,7 +82,7 @@ const sd = QuestSd(myquest);
 
 # Functions
 
-These are the links to the original MATLAB version of QUEST. 
+These are the links to the help of original MATLAB version of QUEST. 
 
 - [QuestCreate](http://psychtoolbox.org/docs/QuestCreate)
 - [QuestUpdate](http://psychtoolbox.org/docs/QuestUpdate)
@@ -95,7 +97,7 @@ These are the links to the original MATLAB version of QUEST.
 - [QuestSimulate](http://psychtoolbox.org/docs/QuestSimulate)
 - [QuestTrials](http://psychtoolbox.org/docs/QuestTrials)
 
-There is no difference in usage between the MATLAB and JavaScript versions except for the following points.
+The usage of jsQUEST is the same as that of the original QUEST except for the following points:
 
 - QuestBetaAnalysis does not support outputting to a file.
 - QuestMode returns an object with the 'mode' and 'pdf' properties.
