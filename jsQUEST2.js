@@ -1,6 +1,33 @@
 // Copyright (c) 2021 Daiichiro Kuroki
 // Released under the MIT license
 //  
+
+const numeric = require("./numeric-module");
+
+export class jsQUEST {
+    constructor(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, range, plotIt){
+        this.data = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, range, plotIt)
+    }
+    quantile(){
+        return QuestQuantile(this.data);
+    }
+    mean(){
+        return QuestMean(this.data);
+    }
+    mode(){
+        return QuestMode(this.data);
+    }
+    simulate(tTest, tActual, plotIt, chart_width, chart_height){
+        return QuestSimulate(this.data, tTest, tActual, plotIt, chart_width, chart_height);
+    }
+    update(tTest, response){
+        this.data = QuestUpdate(this.data, tTest, response); 
+    }
+    sd(){
+        return QuestSd(this.data);
+    }
+}
+
 function QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, range, plotIt){
     // q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma,[grain],[range],[plotIt])
 
