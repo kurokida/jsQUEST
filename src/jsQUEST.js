@@ -1,3 +1,8 @@
+import numeric from 'numeric_es6';
+import interp1 from 'interp1';
+
+console.log(numeric.isFinite(123))
+
 // Copyright (c) 2021 Daiichiro Kuroki
 // Released under the MIT license
 //  
@@ -719,7 +724,7 @@ function QuestQuantile(q,quantileOrder){
         alert(`quantileOrder ${quantileOrder} is outside range 0 to 1.`)
     }
 
-    p = cumsum(q.pdf);
+    const p = cumsum(q.pdf);
     // if ~isfinite(p(end))
     //     error('pdf is not finite')
     // end
@@ -1689,3 +1694,19 @@ function QuestTrials(q, binsize){
     
     return trial
 }
+
+export {
+  QuestCreate,
+  QuestRecompute,
+  QuestQuantile,
+  QuestSimulate,
+  QuestUpdate,
+  QuestMean,
+  QuestSd,
+  QuestMode,
+  QuestBetaAnalysis,
+  QuestBetaAnalysis1,
+  QuestPdf,
+  QuestP,
+  QuestTrials
+};
