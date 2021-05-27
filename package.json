@@ -1,0 +1,25 @@
+{
+  "name": "quest",
+  "version": "0.2.0",
+  "description": "jsQUEST",
+  "main": "jsQUEST.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurokida/QUEST.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kurokida/QUEST/issues"
+  },
+  "homepage": "https://github.com/kurokida/QUEST#readme",
+  "dependencies": {
+    "interp1": "^1.0.13"
+  }
+}

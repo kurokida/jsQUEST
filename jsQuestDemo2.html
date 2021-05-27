@@ -3,14 +3,19 @@
   <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/interp1@1/dist/interp1.umd.min.js'></script>
-    <script src="./app.js"></script>
   </head>
   <body>
     <p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
     <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p>
     <p>Please open the JavaScript console window in your browser.</p>
   </body>
-  <script>
+  <script type="module">
+    import {jsQUEST} from './jsQUEST.js'
+    // import numeric from './numeric-module.js'
+    // console.log(testNumeric.isFinite(1))
+
+
+
     // These values are the defaults for QuestDemo
     const tActual = -2
     const tGuess = -1
@@ -19,13 +24,12 @@
     const beta = 3.5;
     const delta = 0.01;
     const gamma = 0.5;
+    
+    let myquest = new jsQUEST(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    console.log(myquest)
+    console.log(myquest.quantile())
 
-    // let myquest = new jsQUEST(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
-    // console.log(myquest)
-    // console.log(myquest.quantile())
-
-
-    let q = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    // let q = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
     // let q = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, undefined, undefined, 1);
 
 
@@ -60,7 +64,8 @@
     for (let k = 0; k < trialsDesired; k++){
 
         // % Get recommended level.  Choose your favorite algorithm.
-        tTest = QuestQuantile(q);	// % Recommended by Pelli (1987), and still our favorite.
+        tTest = myquest.quantile();
+        // tTest = QuestQuantile(q);	// % Recommended by Pelli (1987), and still our favorite.
         // tTest=QuestMean(q);		// % Recommended by King-Smith et al. (1994)
         // tTest=QuestMode(q).mode;		// % Recommended by Watson & Pelli (1983)
 
