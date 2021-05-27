@@ -20,7 +20,7 @@ This script reproduces [jsQuest's demo](https://github.com/kurokida/jsQUEST/blob
 ## Demo
 This script reproduces [a test of jsQuest against PsychoPy](https://gitlab.pavlovia.org/tpronk/demo_jsquest/#testing-jsquest-against-psychopy).
 
-`node jsQUEST_demo.js`
+`node jsQUEST_test.js`
 
 
 # Notes
