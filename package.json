@@ -8,7 +8,10 @@
     "interp1": "^1.0.13",
     "numeric_es6": "github:tpronk/numeric"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "rollup": "^2.50.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
