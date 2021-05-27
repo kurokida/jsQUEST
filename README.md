@@ -24,5 +24,4 @@ This script reproduces [a test of jsQuest against PsychoPy](https://gitlab.pavlo
 
 
 # Notes
-* As it is now it can be used as a module in a web-browser, but I'll need to ask around a bit to find out how to best build a version that acts like a global variable (for use in jsPsych, for example).
-* jsQUEST depends on the numeric library, which I forked and turned into an ES6 module as well. The fork of numeric can be found [here](https://github.com/tpronk/numeric).
+jsQUEST depends on the numeric library, which I forked and turned into an ES6 module as well. The fork of numeric can be found [here](https://github.com/tpronk/numeric).
