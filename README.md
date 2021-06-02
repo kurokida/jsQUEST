@@ -9,7 +9,7 @@ Install node, then clone the repo to your hard drive. Next, you can install jsQU
 # Building jsQUEST
 To package jsQUEST and it's dependencies, and export those as UMD bundle, run the command below. Your bundle will be available in the `dist/` directory:
 
-`rollup -c`
+`npx rollup -c`
 
 # Demos and Tests
 ## Demo
