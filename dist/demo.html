@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="./numeric.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/interp1@1/dist/interp1.umd.min.js'></script>
     <script src="./jsQUEST.js"></script>
   </head>
   <body>
@@ -20,8 +18,8 @@
     const beta = 3.5;
     const delta = 0.01;
     const gamma = 0.5;
-    let q = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
-    // let q = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, undefined, undefined, 1);
+    let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    // let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, undefined, undefined, 1);
 
 
     // animate = 0: No graphs
@@ -55,23 +53,23 @@
     for (let k = 0; k < trialsDesired; k++){
 
         // % Get recommended level.  Choose your favorite algorithm.
-        tTest = QuestQuantile(q);	// % Recommended by Pelli (1987), and still our favorite.
-        // tTest=QuestMean(q);		// % Recommended by King-Smith et al. (1994)
-        // tTest=QuestMode(q).mode;		// % Recommended by Watson & Pelli (1983)
+        tTest = jsQUEST.QuestQuantile(q);	// % Recommended by Pelli (1987), and still our favorite.
+        // tTest=jsQUEST.QuestMean(q);		// % Recommended by King-Smith et al. (1994)
+        // tTest=jsQUEST.QuestMode(q).mode;		// % Recommended by Watson & Pelli (1983)
 
         // % We are free to test any intensity we like, not necessarily what Quest suggested.
         // % 	tTest=min(-0.05,max(-3,tTest)); % Restrict to range of log contrasts that our equipment can produce.
     
         // % Simulate a trial
         if (animate){
-            response = QuestSimulate(q, tTest, tActual, plotIt, chart_width, chart_height);
+            response = jsQUEST.QuestSimulate(q, tTest, tActual, plotIt, chart_width, chart_height);
         } else {
-            response = QuestSimulate(q, tTest, tActual);
+            response = jsQUEST.QuestSimulate(q, tTest, tActual);
         }
         console.log(`Trial ${k+1} at ${tTest} is  ${wrongRight[response]}`)
 	
 	    // % Update the pdf
-	    q = QuestUpdate(q, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+	    q = jsQUEST.QuestUpdate(q, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
 
         // For drawing the pdf graph
         mydata = []
@@ -144,12 +142,12 @@
     }
 
     // % Ask Quest for the final estimate of threshold.
-    const t = QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
-    const sd=QuestSd(q);
+    const t = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
+    const sd=jsQUEST.QuestSd(q);
     console.log(`Final threshold estimate (mean+-sd) is ${t} +- ${sd}`)
 
     // % Similar and preferable to the maximum likelihood recommended by Watson & Pelli (1983).
-    console.log(`Mode threshold estimate is ${QuestMode(q).mode}, and the pdf is ${QuestMode(q).pdf}`)
+    console.log(`Mode threshold estimate is ${jsQUEST.QuestMode(q).mode}, and the pdf is ${jsQUEST.QuestMode(q).pdf}`)
     
     console.log(`You set the true threshold to ${tActual}`)
     console.log(`Quest knew only your guess: ${tGuess} +- ${tGuessSd}.`)
@@ -162,7 +160,7 @@
     // We recommend using such data to estimate beta once, and then using that beta in your daily threshold measurements. 
     // With that disclaimer, here's the analysis with beta as a free parameter.
 
-    if (beta_analysis) QuestBetaAnalysis(q)
+    if (beta_analysis) jsQUEST.QuestBetaAnalysis(q)
 
     // fprintf('Actual parameters of simulated observer:\n');
     // fprintf('logC	beta	gamma\n');
