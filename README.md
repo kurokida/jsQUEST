@@ -7,7 +7,7 @@ The files published here are translated from MATLAB files written by [Professor 
 The main script is the dist/jsQUEST.js file.
 
 # How to use
-Please refer to this page.
+Please refer to [this page](https://kurokida.github.io/jsQUEST/).
 
 # Demonstration
 

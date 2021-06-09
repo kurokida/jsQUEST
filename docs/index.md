@@ -40,18 +40,18 @@ Estimate of the stimulus intensity that is expected to result in a response rate
 
 # How to use jsQUEST
 
-The usage of jsQUEST is the same as QUEST distributed as a part of Psychtoolbox. So, you can refer to [the help of Psychtoolbox](http://psychtoolbox.org/docs/Quest).
+The usage of jsQUEST is the same as QUEST distributed as a part of Psychtoolbox. So, you can refer to [the help of Psychtoolbox](http://psychtoolbox.org/docs/Quest). Note the prefix "jsQUEST".
 
 At first, call the QuestCreate function like this.
 
 ```javascript 
-myquest = QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+myquest = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
 ```
 
 The QuestQuantile function returns a suggestion of stimulus intensity for the next trial. You can use the QuestMean or QuestMode functions instead of the QuestQuantile.
 
 ```javascript 
-const tTest = QuestQuantile(myquest);	
+const tTest = jsQUEST.QuestQuantile(myquest);	
 ```
 
 If the default values are used, the first call of the QuestQuantile function returns -0.65. Note that the difference between the returned value (-0.65) and tGuess(-1) is 0.35. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of the tGuess for the first trial. As long as the same Beta, Delta, and Gamma are used the difference between the first returned value and tGuess will be about 0.35, no matter what the value of tGuess is.
@@ -61,7 +61,7 @@ The procedure of QUEST is easy to understand when the intensity of the stimulus 
 ## Update the PDF
 
 ```javascript
-myquest = QuestUpdate(myquest, tTest, response); 
+myquest = jsQUEST.QuestUpdate(myquest, tTest, response); 
 // % Add the new datum (actual test intensity and observer response) to the database.
 ```
 
@@ -76,8 +76,8 @@ Watson and Pelli (1983) recommended to stop updating (a) when a confidence inter
 Finally, the experimenter can estimate the threshold and its standard deviation in the following way:
 
 ```javascript
-const threshold = QuestMean(myquest); // % Recommended by Pelli (1989) and King-Smith et al. (1994). 
-const sd = QuestSd(myquest);
+const threshold = jsQUEST.QuestMean(myquest); // % Recommended by Pelli (1989) and King-Smith et al. (1994). 
+const sd = jsQUEST.QuestSd(myquest);
 ```
 
 # Functions
