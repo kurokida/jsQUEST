@@ -1,7 +1,7 @@
 import numeric from 'numeric_es6';
 import interp1 from 'interp1';
 
-console.log(numeric.isFinite(123))
+console.log('jsQUEST Version 1.0.1')
 
 // Copyright (c) 2021 Daiichiro Kuroki
 // Released under the MIT license

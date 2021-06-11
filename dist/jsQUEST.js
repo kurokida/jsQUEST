@@ -148,7 +148,6 @@
       var s = numeric.dim(A);
       var i,j,m,row,ret;
       m = s[0];
-      s[1];
       ret = [];
       for(i=0;i<m;i++) {
           row = [];
@@ -1023,6 +1022,7 @@
   numeric.t = function t(x,y) { return new numeric.T(x,y); };
 
   numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
+      numeric.indexOf;
       if(typeof setup !== "string") {
           var k;
           setup = '';
@@ -2458,7 +2458,6 @@
           for(j=0;j!==n;j++) {
               if(j>0 && bi[j]*ai[j]<0) ri.push(x[j]);
               dx = (x[j+1]-x[j]);
-              x[j];
               y0 = ai[j];
               y1 = bi[j+1];
               k0 = ci[j]/dx;
@@ -2724,7 +2723,7 @@
       if(isNaN(f0)) throw new Error('gradient: f(x) is a NaN!');
       var max = Math.max;
       var i,x0 = numeric.clone(x),f1,f2, J = Array(n);
-      var errest,max = Math.max,eps = 1e-3,abs = Math.abs, min = Math.min;
+      numeric.div; numeric.sub;var errest,max = Math.max,eps = 1e-3,abs = Math.abs, min = Math.min;
       var t0,t1,t2,it=0,d1,d2,N;
       for(i=0;i<n;i++) {
           var h = max(1e-6*f0,1e-8);
@@ -2765,7 +2764,7 @@
       var max = Math.max, norm2 = numeric.norm2;
       tol = max(tol,numeric.epsilon);
       var step,g0,g1,H1 = options.Hinv || numeric.identity(n);
-      var dot = numeric.dot, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
+      var dot = numeric.dot; numeric.inv; var sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
       var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
       var it=0,s,x1,y,Hy,ys,t,nstep;
       var msg = "";
@@ -2897,7 +2896,7 @@
       var it = 0;
       var add = numeric.add, mul = numeric.mul, y1,erinf;
       var min = Math.min, abs = Math.abs, norminf = numeric.norminf,pow = Math.pow;
-      var any = numeric.any, lt = numeric.lt, and = numeric.and;
+      var any = numeric.any, lt = numeric.lt, and = numeric.and; numeric.sub;
       var e0, e1, ev;
       var ret = new numeric.Dopri(xs,ys,k1,ymid,-1,"");
       if(typeof event === "function") e0 = event(x0,y0);
@@ -3107,12 +3106,13 @@
   };
 
   numeric.__solveLP = function __solveLP(c,A,b,tol,maxit,x,flag) {
-      var sum = numeric.sum, mul = numeric.mul, sub = numeric.sub, dot = numeric.dot, div = numeric.div, add = numeric.add;
+      var sum = numeric.sum; numeric.log; var mul = numeric.mul, sub = numeric.sub, dot = numeric.dot, div = numeric.div, add = numeric.add;
       var m = c.length, n = b.length,y;
       var unbounded = false, i0=0;
       var alpha = 1.0;
-      numeric.transpose(A); var transpose = numeric.transpose,sqrt = Math.sqrt, abs = Math.abs;
-      var min = Math.min;
+      numeric.transpose(A); numeric.svd;var transpose = numeric.transpose;numeric.leq; var sqrt = Math.sqrt, abs = Math.abs;
+      numeric.muleq;
+      numeric.norminf; numeric.any;var min = Math.min;
       var all = numeric.all, gt = numeric.gt;
       var p = Array(m), A0 = Array(n);numeric.rep([n],1); var H;
       var solve = numeric.solve, z = sub(b,dot(A,x)),count;
@@ -3153,7 +3153,7 @@
 
   numeric._solveLP = function _solveLP(c,A,b,tol,maxit) {
       var m = c.length, n = b.length,y;
-      var sub = numeric.sub, dot = numeric.dot;
+      numeric.sum; numeric.log; numeric.mul; var sub = numeric.sub, dot = numeric.dot; numeric.div; numeric.add;
       var c0 = numeric.rep([m],0).concat([1]);
       var J = numeric.rep([n,1],-1);
       var A0 = numeric.blockMatrix([[A                   ,   J  ]]);
@@ -3366,7 +3366,7 @@
       return yqs.slice();
   }
 
-  console.log(numeric.isFinite(123));
+  console.log('jsQUEST Version 1.0.1');
 
   // Copyright (c) 2021 Daiichiro Kuroki
   // Released under the MIT license
