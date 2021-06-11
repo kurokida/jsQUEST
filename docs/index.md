@@ -38,6 +38,18 @@ Specify the probability that the experimenter is interested in. It is convention
 
 Estimate of the stimulus intensity that is expected to result in a response rate of pThreshold. The default is -1. Given that the x-axis is the log scale, the default means 10^(-1) = 0.1. The units are arbitrary. The symbol "^" means a power in this document.
 
+# Installation
+
+Write the following line in the head section.
+
+```html
+<script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+```
+
+Or download the dist/jsQUEST.js file from [the repository](https://github.com/kurokida/jsQUEST) and include it using the script tag.
+
+If you use jsQUEST as an ES6 module, please refer to [the README](https://github.com/kurokida/jsQUEST).
+
 # How to use jsQUEST
 
 The usage of jsQUEST is the same as QUEST distributed as a part of Psychtoolbox. So, you can refer to [the help of Psychtoolbox](http://psychtoolbox.org/docs/Quest). Note the prefix "jsQUEST".
