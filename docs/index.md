@@ -48,7 +48,7 @@ Write the following line in the head section.
 
 Or download the dist/jsQUEST.js file from [the repository](https://github.com/kurokida/jsQUEST) and include it using the script tag.
 
-If you use jsQUEST as an ES6 module, please refer to [the README](https://github.com/kurokida/jsQUEST).
+If you want to use jsQUEST as an ES6 module, please refer to [the README](https://github.com/kurokida/jsQUEST).
 
 # How to use jsQUEST
 
