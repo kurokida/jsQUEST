@@ -64,12 +64,12 @@ To package jsQUEST and it's dependencies, and export those as UMD bundle, run th
 ### Demo
 This script reproduces [jsQuest's demo](https://github.com/kurokida/jsQUEST/blob/main/jsQuestDemo.html), but without the graph.
 
-`node jsQUEST_demo.js`
+`node test/jsQUEST_demo.js`
 
 ### Demo
 This script reproduces [a test of jsQuest against PsychoPy](https://gitlab.pavlovia.org/tpronk/demo_jsquest/#testing-jsquest-against-psychopy).
 
-`node jsQUEST_test.js`
+`node test/jsQUEST_test.js`
 
 
 ## Notes
