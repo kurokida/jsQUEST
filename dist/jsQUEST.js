@@ -695,14 +695,14 @@
               numeric[i+'VS'] = numeric.pointwise2(['x[i]','y'],code('ret[i]','x[i]','y'),setup);
               numeric[i] = Function(
                       'var n = arguments.length, i, x = arguments[0], y;\n'+
-                      'var VV = numeric.'+i+'VV, VS = numeric.'+i+'VS, SV = numeric.'+i+'SV;\n'+
-                      'var dim = numeric.dim;\n'+
+                      'var VV = this.'+i+'VV, VS = this.'+i+'VS, SV = this.'+i+'SV;\n'+
+                      'var dim = this.dim;\n'+
                       'for(i=1;i!==n;++i) { \n'+
                       '  y = arguments[i];\n'+
                       '  if(typeof x === "object") {\n'+
-                      '      if(typeof y === "object") x = numeric._biforeach2(x,y,dim(x),0,VV);\n'+
-                      '      else x = numeric._biforeach2(x,y,dim(x),0,VS);\n'+
-                      '  } else if(typeof y === "object") x = numeric._biforeach2(x,y,dim(y),0,SV);\n'+
+                      '      if(typeof y === "object") x = this._biforeach2(x,y,dim(x),0,VV);\n'+
+                      '      else x = this._biforeach2(x,y,dim(x),0,VS);\n'+
+                      '  } else if(typeof y === "object") x = this._biforeach2(x,y,dim(y),0,SV);\n'+
                       '  else '+codeeq('x','y')+'\n'+
                       '}\nreturn x;\n');
               numeric[o] = numeric[i];
@@ -710,12 +710,12 @@
               numeric[i+'eqS'] = numeric.pointwise2(['ret[i]','x'], codeeq('ret[i]','x'),setup);
               numeric[i+'eq'] = Function(
                       'var n = arguments.length, i, x = arguments[0], y;\n'+
-                      'var V = numeric.'+i+'eqV, S = numeric.'+i+'eqS\n'+
-                      'var s = numeric.dim(x);\n'+
+                      'var V = this.'+i+'eqV, S = this.'+i+'eqS\n'+
+                      'var s = this.dim(x);\n'+
                       'for(i=1;i!==n;++i) { \n'+
                       '  y = arguments[i];\n'+
-                      '  if(typeof y === "object") numeric._biforeach(x,y,s,0,V);\n'+
-                      '  else numeric._biforeach(x,y,s,0,S);\n'+
+                      '  if(typeof y === "object") this._biforeach(x,y,s,0,V);\n'+
+                      '  else this._biforeach(x,y,s,0,S);\n'+
                       '}\nreturn x;\n');
           }
       }
@@ -738,17 +738,17 @@
               numeric[i+'eq'] = Function('x',
                       'if(typeof x !== "object") return '+o+'x\n'+
                       'var i;\n'+
-                      'var V = numeric.'+i+'eqV;\n'+
-                      'var s = numeric.dim(x);\n'+
-                      'numeric._foreach(x,s,0,V);\n'+
+                      'var V = this.'+i+'eqV;\n'+
+                      'var s = this.dim(x);\n'+
+                      'this._foreach(x,s,0,V);\n'+
                       'return x;\n');
               numeric[i+'V'] = numeric.pointwise2(['x[i]'],'ret[i] = '+o+'(x[i]);',setup);
               numeric[i] = Function('x',
                       'if(typeof x !== "object") return '+o+'(x)\n'+
                       'var i;\n'+
-                      'var V = numeric.'+i+'V;\n'+
-                      'var s = numeric.dim(x);\n'+
-                      'return numeric._foreach2(x,s,0,V);\n');
+                      'var V = this.'+i+'V;\n'+
+                      'var s = this.dim(x);\n'+
+                      'return this._foreach2(x,s,0,V);\n');
           }
       }
       for(i=0;i<numeric.mathfuns.length;++i) {
@@ -766,9 +766,9 @@
                       o[0]+';\n'+
                       '    return accum;\n'+
                       '}'+
-                      'if(typeof s === "undefined") s = numeric.dim(x);\n'+
+                      'if(typeof s === "undefined") s = this.dim(x);\n'+
                       'if(typeof k === "undefined") k = 0;\n'+
-                      'if(k === s.length-1) return numeric.'+i+'V(x);\n'+
+                      'if(k === s.length-1) return this.'+i+'V(x);\n'+
                       'var xi;\n'+
                       'var n = x.length, i;\n'+
                       'for(i=n-1;i!==-1;--i) {\n'+
@@ -3252,8 +3252,6 @@
       err('Reached end of file without ENDATA');
   };
 
-  var numeric$1 = {numeric};
-
   /**
    * Finds the index of range in which a query value is included in a sorted
    * array with binary search.
@@ -3531,7 +3529,7 @@
       //     error('"tGuess" must be real and finite.');
       // end
       // JavaScript does not have a isreal function.
-      if (!numeric$1.isFinite(tGuess)){
+      if (!numeric.isFinite(tGuess)){
           alert('The tGuess parameter must be finite.');
       }
 
@@ -3690,39 +3688,39 @@
       // % prepare all the arrays
 
       // q.i=-q.dim/2:q.dim/2;
-      q.i = numeric$1.linspace(-q.dim/2, q.dim/2);
+      q.i = numeric.linspace(-q.dim/2, q.dim/2);
 
       // q.x=q.i*q.grain;
-      q.x = numeric$1.mul(q.i, q.grain);
+      q.x = numeric.mul(q.i, q.grain);
 
       // q.pdf=exp(-0.5*(q.x/q.tGuessSd).^2);
       function calc_pdf(){
-          const tmp1 = numeric$1.div(q.x, q.tGuessSd);
-          const tmp2 = numeric$1.pow(tmp1, 2);
-          const tmp3 = numeric$1.mul(-0.5, tmp2);
-          return numeric$1.exp(tmp3)
+          const tmp1 = numeric.div(q.x, q.tGuessSd);
+          const tmp2 = numeric.pow(tmp1, 2);
+          const tmp3 = numeric.mul(-0.5, tmp2);
+          return numeric.exp(tmp3)
       }
       q.pdf = calc_pdf();
       
       // q.pdf=q.pdf/sum(q.pdf);
-      q.pdf = numeric$1.div(q.pdf, numeric$1.sum(q.pdf));
+      q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf));
 
       // i2=-q.dim:q.dim;
-      const i2 = numeric$1.linspace(-q.dim, q.dim);
+      const i2 = numeric.linspace(-q.dim, q.dim);
 
       // q.x2=i2*q.grain;
-      q.x2 = numeric$1.mul(i2, q.grain);
+      q.x2 = numeric.mul(i2, q.grain);
           
       // q.p2 = q.delta*q.gamma+(1-q.delta)*(1-(1-q.gamma)*exp(-10.^(q.beta*q.x2)));
       function calc_p2(x){
-          const tmp1 = numeric$1.mul(q.delta, q.gamma);
-          const tmp2 = numeric$1.sub(1, q.delta);
-          const tmp3 = numeric$1.sub(1, q.gamma);
-          const tmp4 = numeric$1.mul(q.beta, x);
-          const tmp5 = numeric$1.pow(10, tmp4);
-          const tmp6 = numeric$1.exp(numeric$1.mul(-1, tmp5));
-          const tmp7 = numeric$1.sub(1, numeric$1.mul(tmp3, tmp6));
-          return numeric$1.add(tmp1, numeric$1.mul(tmp2, tmp7))
+          const tmp1 = numeric.mul(q.delta, q.gamma);
+          const tmp2 = numeric.sub(1, q.delta);
+          const tmp3 = numeric.sub(1, q.gamma);
+          const tmp4 = numeric.mul(q.beta, x);
+          const tmp5 = numeric.pow(10, tmp4);
+          const tmp6 = numeric.exp(numeric.mul(-1, tmp5));
+          const tmp7 = numeric.sub(1, numeric.mul(tmp3, tmp6));
+          return numeric.add(tmp1, numeric.mul(tmp2, tmp7))
       }
       q.p2 = calc_p2(q.x2);
 
@@ -3813,7 +3811,7 @@
       // if any(~isfinite(q.p2))
       //     error('psychometric function p2 is not finite')
       // end
-      if (numeric$1.isFinite(q.p2).includes(false)){
+      if (numeric.isFinite(q.p2).includes(false)){
           alert('psychometric function p2 is not finite');
       }
 
@@ -3835,7 +3833,7 @@
       const x3 = get_array_using_index(q.x2, index);
       // q.xThreshold = numeric.spline(p3, x3).at(q.pThreshold) // Bug?
       q.xThreshold = interp1(p3, x3, [q.pThreshold])[0];
-      if (numeric$1.isFinite(q.xThreshold) === false){
+      if (numeric.isFinite(q.xThreshold) === false){
           alert(`psychometric function has no ${q.pThreshold} threshold`);
       }
 
@@ -3916,13 +3914,13 @@
       //     q %#ok<NOPRT>
       //     error('psychometric function p2 is not finite')
       // end
-      q.p2 = calc_p2(numeric$1.add(q.x2, q.xThreshold));
-      if (numeric$1.isFinite(q.p2).includes(false)){
+      q.p2 = calc_p2(numeric.add(q.x2, q.xThreshold));
+      if (numeric.isFinite(q.p2).includes(false)){
           alert('psychometric function p2 is not finite');
       }
 
       // q.s2=fliplr([1-q.p2;q.p2]);
-      q.s2 = [fliplr(numeric$1.sub(1, q.p2)), fliplr(q.p2)];
+      q.s2 = [fliplr(numeric.sub(1, q.p2)), fliplr(q.p2)];
 
       // if ~isfield(q,'intensity') || ~isfield(q,'response')
       //     Preallocate for 10000 trials, keep track of real useful content in q.trialCount. 
@@ -3936,14 +3934,14 @@
       // end
       if (typeof q.intensity === 'undefined' || typeof q.response === 'undefined'){
           q.trialCount = 0;
-          q.intensity = numeric$1.rep([10000], 0);
-          q.response = numeric$1.rep([10000], 0);
+          q.intensity = numeric.rep([10000], 0);
+          q.response = numeric.rep([10000], 0);
       }
       
       // if any(~isfinite(q.s2(:)))
       //     error('psychometric function s2 is not finite')
       // end
-      const isfinite_q_s2 = numeric$1.isFinite(q.s2); // Note that q.s2 is an array of array.
+      const isfinite_q_s2 = numeric.isFinite(q.s2); // Note that q.s2 is an array of array.
       if (isfinite_q_s2[0].includes(false) || isfinite_q_s2[1].includes(false)){
           alert('psychometric function s2 is not finite');
       }
@@ -3967,7 +3965,7 @@
       // if any(~isfinite(q.pdf))
       //     error('prior pdf is not finite')
       // end
-      if (numeric$1.isFinite(q.pdf).includes(false)){
+      if (numeric.isFinite(q.pdf).includes(false)){
           alert('prior pdf is not finite');
       }
 
@@ -3990,22 +3988,22 @@
       for (let k = 0; k < q.trialCount; k++){
           const inten = Math.max(-1*large_num, Math.min(large_num, q.intensity[k])); // make intensity finite
           const tmp = Math.round((inten - q.tGuess) / q.grain);
-          let ii = numeric$1.sub(numeric$1.add(q.pdf.length, q.i), tmp);
+          let ii = numeric.sub(numeric.add(q.pdf.length, q.i), tmp);
           const tmp2 = ii[0];
           if (tmp2 < 0){ // 'ii' must be greater than or equal to zero because 'ii' is the index of an array in JavaScript.
-              ii = numeric$1.sub(ii, tmp2); 
+              ii = numeric.sub(ii, tmp2); 
           }
           const tmp3 = ii[ii.length-1];
-          const tmp4 = numeric$1.dim(q.s2)[1]-1;
+          const tmp4 = numeric.dim(q.s2)[1]-1;
           if (tmp3 > tmp4){ // Also, 'ii' must not be greater than the size of an array minus one.
-              ii = numeric$1.sub(numeric$1.add(ii, tmp4), tmp3);
+              ii = numeric.sub(numeric.add(ii, tmp4), tmp3);
           }
 
           // q.pdf = numeric.mul(q.pdf, q.s2[q.response(k)+1, ii]) // 4 ms
-          q.pdf = numeric$1.mul(q.pdf, get_array_using_index(q.s2[q.response[k]], ii));
+          q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[q.response[k]], ii));
 
           if (q.normalizePdf && (k+1) % 100 === 0){
-  		    q.pdf = numeric$1.div(q.pdf, numeric$1.sum(q.pdf));	// % avoid underflow; keep the pdf normalized	% 3 ms
+  		    q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf));	// % avoid underflow; keep the pdf normalized	% 3 ms
           }
       }
 
@@ -4013,13 +4011,13 @@
       //     q.pdf=q.pdf/sum(q.pdf);		% keep the pdf normalized	% 3 ms
       // end
       if (q.normalizePdf === 1){
-          q.pdf = numeric$1.div(q.pdf, numeric$1.sum(q.pdf));		// % keep the pdf normalized	% 3 ms
+          q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf));		// % keep the pdf normalized	% 3 ms
       }
 
       // if any(~isfinite(q.pdf))
       //     error('pdf is not finite')
       // end
-      if (numeric$1.isFinite(q.pdf).includes(false)){
+      if (numeric.isFinite(q.pdf).includes(false)){
           alert('pdf is not finite');
       }
 
@@ -4072,7 +4070,7 @@
       if (Array.isArray(q) && q.length > 1){
           if (typeof quantileOrder !== 'undefined') alert('Cannot accept quantileOrder for q vector. Set each q.quantileOrder instead.');
 
-          const t = numeric$1.rep([q.length], 0);
+          const t = numeric.rep([q.length], 0);
           for (let i = 0; i < q.length; i++){
               t[i] = QuestQuantile(q[i]);
           }
@@ -4214,7 +4212,7 @@
           const col = ['RGBA(255, 0, 0, 1)', 'RGBA(0, 128, 0, 1)'];
 
           // t = min(max(q.intensity(1:q.trialCount) - tActual, x2min), x2max);
-          const tmp = numeric$1.sub(q.intensity.slice(0, q.trialCount), tActual);
+          const tmp = numeric.sub(q.intensity.slice(0, q.trialCount), tActual);
           // Changed the name of the variable from t to t2 to avoid confusion
           const t2 = get_smaller_numbers(get_larger_numbers(tmp, x2min), x2max);
           
@@ -4233,7 +4231,7 @@
               negative = find_less_than_or_equal_to_zero_index(q.response.slice(0, q.trialCount));
               pcol = 'RGBA(0, 128, 0, 1)';
           } else {
-              positive = numeric$1.linspace(0, q.trialCount-1);
+              positive = numeric.linspace(0, q.trialCount-1);
               negative = [];
               pcol = 'RGBA(0, 0, 0, 1)';
           }
@@ -4337,7 +4335,7 @@
               data: [{
                   x: tActual, 
                   // y: numeric.spline(numeric.add(q.x2, tActual) , q.p2).at(tActual)
-                  y: interp1(numeric$1.add(q.x2, tActual), q.p2, [tActual])[0] 
+                  y: interp1(numeric.add(q.x2, tActual), q.p2, [tActual])[0] 
               }],
               backgroundColor: 'RGBA(255, 0, 255, 1)',
               pointBorderColor: 'RGBA(255, 0, 255, 1)',
@@ -4440,17 +4438,17 @@
               
           // ii=size(q.pdf,2)+q.i-round((inten-q.tGuess)/q.grain);
           const tmp = q.pdf.length - Math.round((inten - q.tGuess)/q.grain);
-          let ii = numeric$1.add(tmp, q.i);
+          let ii = numeric.add(tmp, q.i);
 
           // if ii(1)<1 || ii(end)>size(q.s2,2)
           // 'ii' must be greater than or equal to zero because 'ii' is the index of an array in JavaScript.
           // Also, 'ii' must not be greater than the size of an array minus one. 
-          if (ii[0] < 0 || ii[ii.length-1] > numeric$1.dim(q.s2)[1]-1){
+          if (ii[0] < 0 || ii[ii.length-1] > numeric.dim(q.s2)[1]-1){
               if (q.warnPdf){
                   // low=(1-size(q.pdf,2)-q.i(1))*q.grain+q.tGuess;
                   // high=(size(q.s2,2)-size(q.pdf,2)-q.i(end))*q.grain+q.tGuess;
                   const low = (1 - q.pdf.length - q.i[0]) * q.grain + q.tGuess;
-                  const high = (numeric$1.dim(q.s2)[1] - q.pdf.length - q.i[q.i.length-1]) * q.grain + q.tGuess;
+                  const high = (numeric.dim(q.s2)[1] - q.pdf.length - q.i[q.i.length-1]) * q.grain + q.tGuess;
                           
                   alert(`QuestUpdate: intensity ${intensity} out of range ${low} to ${high}. Pdf will be inexact. Suggest that you increase "range" in call to QuestCreate.`);
                   // pending
@@ -4465,20 +4463,20 @@
               // 	ii=ii+size(q.s2,2)-ii(end);
               // end
               if (ii[0] < 0){
-                  ii = numeric$1.sub(ii, ii[0]);
+                  ii = numeric.sub(ii, ii[0]);
               } else {
-                  const tmp = numeric$1.add(ii, numeric$1.dim(q.s2)[1]-1);
-                  ii = numeric$1.sub(tmp, ii[ii.length-1]);
+                  const tmp = numeric.add(ii, numeric.dim(q.s2)[1]-1);
+                  ii = numeric.sub(tmp, ii[ii.length-1]);
               }
           }
 
           // q.pdf=q.pdf.*q.s2(response+1,ii); % 4 ms
-          q.pdf = numeric$1.mul(q.pdf, get_array_using_index(q.s2[response], ii));
+          q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[response], ii));
           // if q.normalizePdf
           // 	q.pdf=q.pdf/sum(q.pdf);		% keep the pdf normalized	% 3 ms
           // end
           if (q.normalizePdf){
-              q.pdf = numeric$1.div(q.pdf, numeric$1.sum(q.pdf));
+              q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf));
           }
       }
 
@@ -4493,7 +4491,7 @@
           // q.intensity = [q.intensity, zeros(1,10000)];
           // q.response  = [q.response,  zeros(1,10000)];
 
-          const tmp = numeric$1.rep([10000], 0);
+          const tmp = numeric.rep([10000], 0);
           q.intensity = q.intensity.concat(tmp);
           q.response = q.response.concat(tmp);
       }
@@ -4529,7 +4527,7 @@
       //     return
       // end
       if (Array.isArray(q) && q.length > 1){
-          let t= numeric$1.rep([q.length], 0);
+          let t= numeric.rep([q.length], 0);
           for (let i = 0; i < q.length; i++){
               t[i] = QuestMean(q[i]);
           }
@@ -4538,8 +4536,8 @@
 
 
       // t=q.tGuess+sum(q.pdf.*q.x)/sum(q.pdf);	% mean of our pdf
-      const tmp = numeric$1.mul(q.pdf, q.x);
-      return q.tGuess + numeric$1.sum(tmp) / numeric$1.sum(q.pdf);	// % mean of our pdf
+      const tmp = numeric.mul(q.pdf, q.x);
+      return q.tGuess + numeric.sum(tmp) / numeric.sum(q.pdf);	// % mean of our pdf
   }
 
   function QuestSd(q){
@@ -4565,7 +4563,7 @@
       //     return
       // end
       if (Array.isArray(q) && q.length > 1){
-          let sd= numeric$1.rep([q.length], 0);
+          let sd= numeric.rep([q.length], 0);
           for (let i = 0; i < q.length; i++){
               sd[i] = QuestSd(q[i]);
           }
@@ -4574,15 +4572,15 @@
 
       // p=sum(q.pdf);
       // sd=sqrt(sum(q.pdf.*q.x.^2)/p-(sum(q.pdf.*q.x)/p).^2);
-      const p = numeric$1.sum(q.pdf);
-      const tmp1 = numeric$1.pow(q.x, 2);
-      const tmp2 = numeric$1.mul(q.pdf, tmp1);
-      const tmp3 = numeric$1.div(numeric$1.sum(tmp2), p);
-      const tmp4 = numeric$1.mul(q.pdf, q.x);
-      const tmp5 = numeric$1.sum(tmp4);
-      const tmp6 = numeric$1.div(tmp5, p);
-      const tmp7 = numeric$1.pow(tmp6, [2]);
-      const tmp8 = numeric$1.sqrt(numeric$1.sub(tmp3, tmp7)); // tmp8 is an array containing only one element
+      const p = numeric.sum(q.pdf);
+      const tmp1 = numeric.pow(q.x, 2);
+      const tmp2 = numeric.mul(q.pdf, tmp1);
+      const tmp3 = numeric.div(numeric.sum(tmp2), p);
+      const tmp4 = numeric.mul(q.pdf, q.x);
+      const tmp5 = numeric.sum(tmp4);
+      const tmp6 = numeric.div(tmp5, p);
+      const tmp7 = numeric.pow(tmp6, [2]);
+      const tmp8 = numeric.sqrt(numeric.sub(tmp3, tmp7)); // tmp8 is an array containing only one element
       return tmp8[0]
 
   }
@@ -4626,7 +4624,7 @@
       //     return
       // end
       if (Array.isArray(q) && q.length > 1){
-          let t= numeric$1.rep([q.length], 0);
+          let t= numeric.rep([q.length], 0);
           for (let i = 0; i < q.length; i++){
               t[i] = QuestMode(q[i]);
           }
@@ -4727,7 +4725,7 @@
       // end
       const p = [];
       for (let i =0; i < qq.length; i++){
-          p.push(numeric$1.sum(qq[i].pdf));
+          p.push(numeric.sum(qq[i].pdf));
       }
 
       // if any(p==0)
@@ -4794,18 +4792,18 @@
 
       // p=sum(p2);
       // Changed the name of the variable from p to tmp_p to avoid confusion
-      const tmp_p = numeric$1.sum(p2);
+      const tmp_p = numeric.sum(p2);
 
       // betaMean=sum(p2.*beta2)/p;
-      const tmp1 = numeric$1.mul(p2, beta2);
-      const tmp2 = numeric$1.sum(tmp1);
-      const betaMean = numeric$1.div(tmp2, tmp_p);
+      const tmp1 = numeric.mul(p2, beta2);
+      const tmp2 = numeric.sum(tmp1);
+      const betaMean = numeric.div(tmp2, tmp_p);
 
       // betaSd=sqrt(sum(p2.*beta2.^2)/p-(sum(p2.*beta2)/p).^2);
-      const tmp3 = numeric$1.mul(p2, numeric$1.pow(beta2, 2));
-      const tmp4 = numeric$1.div(numeric$1.sum(tmp3), tmp_p);
-      const tmp5 = numeric$1.pow(betaMean, [2]);
-      const betaSd = numeric$1.sqrt(numeric$1.sub(tmp4, tmp5))[0];
+      const tmp3 = numeric.mul(p2, numeric.pow(beta2, 2));
+      const tmp4 = numeric.div(numeric.sum(tmp3), tmp_p);
+      const tmp5 = numeric.pow(betaMean, [2]);
+      const betaSd = numeric.sqrt(numeric.sub(tmp4, tmp5))[0];
 
       // beta has a very skewed distribution, with a long tail out to very large value of beta, whereas 1/beta is more symmetric, with a roughly normal distribution. 
       // Thus it is statistically more efficient to estimate the parameter as 1/average(1/beta) than as average(beta). 
@@ -4814,13 +4812,13 @@
 
 
       // iBetaMean=sum(p2./beta2)/p;
-      const iBetaMean = numeric$1.div(numeric$1.sum(numeric$1.div(p2, beta2)), tmp_p);
+      const iBetaMean = numeric.div(numeric.sum(numeric.div(p2, beta2)), tmp_p);
 
       // iBetaSd=sqrt(sum(p2./beta2.^2)/p-(sum(p2./beta2)/p).^2);
-      const tmp6 = numeric$1.div(p2, numeric$1.pow(beta2, 2));
-      const tmp7 = numeric$1.div(numeric$1.sum(tmp6), tmp_p);
-      const tmp8 = numeric$1.pow(iBetaMean, [2]);
-      const iBetaSd = numeric$1.sqrt(numeric$1.sub(tmp7, tmp8));
+      const tmp6 = numeric.div(p2, numeric.pow(beta2, 2));
+      const tmp7 = numeric.div(numeric.sum(tmp6), tmp_p);
+      const tmp8 = numeric.pow(iBetaMean, [2]);
+      const iBetaSd = numeric.sqrt(numeric.sub(tmp7, tmp8));
 
       // for f=fid
       //     %	fprintf(f,'Threshold %4.2f +- %.2f; Beta mode %.1f mean %.1f +- %.1f imean 1/%.1f +- %.1f; Gamma %.2f\n',t,sd,q2(i).beta,betaMean,betaSd,1/iBetaMean,iBetaSd,q.gamma);
@@ -4870,7 +4868,7 @@
       //     return
       // end
       if (Array.isArray(q) && q.length > 1){
-          let p = numeric$1.rep([q.length], 0);
+          let p = numeric.rep([q.length], 0);
           for (let i = 0; i < q.length; i++){
               p[i] = QuestPdf(q[i],t[i]);
           }
@@ -4935,7 +4933,7 @@
   }
 
   function indexSort(array) {
-      const index = numeric$1.linspace(0, array.length-1); 
+      const index = numeric.linspace(0, array.length-1); 
       function compareFunc(a, b){
         return array[a] - array[b]
       }
@@ -5010,11 +5008,11 @@
       // if binsize>0
       //     intensity=round(intensity/binsize)*binsize;
       // end
-      let intensity2;
+      let intensity2 = intensity;
       if (binsize > 0){
-          const tmp1 = numeric$1.div(intensity, binsize);
-          const tmp2 = numeric$1.round(tmp1);
-          intensity2 = numeric$1.mul(tmp2, binsize);
+          const tmp1 = numeric.div(intensity, binsize);
+          const tmp2 = numeric.round(tmp1);
+          intensity2 = numeric.mul(tmp2, binsize);
       }
 
       // % compact
