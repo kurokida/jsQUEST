@@ -1643,7 +1643,7 @@ function QuestTrials(q, binsize){
     // if binsize>0
     //     intensity=round(intensity/binsize)*binsize;
     // end
-    let intensity2
+    let intensity2 = intensity;
     if (binsize > 0){
         const tmp1 = numeric.div(intensity, binsize)
         const tmp2 = numeric.round(tmp1)
