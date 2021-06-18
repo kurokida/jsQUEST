@@ -23,3 +23,5 @@ for (let k = 0; k < responses.length; k++){
 const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 const mySD = jsQUEST.QuestSd(q);
 console.log(`Final threshold estimate (mean+-sd) is ${myMean} +- ${mySD}`)
+
+// See. https://gitlab.pavlovia.org/tpronk/demo_jsquest/#testing-jsquest-against-psychopy

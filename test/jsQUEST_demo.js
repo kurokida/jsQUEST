@@ -8,7 +8,7 @@ const pThreshold = 0.82;
 const beta = 3.5;
 const delta = 0.01;
 const gamma = 0.5;
-const trialsDesired = 10;
+const trialsDesired = 20;
 const wrongRight = ['wrong','right'];
 
 let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
@@ -34,3 +34,20 @@ for (let k = 0; k < trialsDesired; k++){
 const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 const mySD = jsQUEST.QuestSd(q);
 console.log(`Final threshold estimate (mean+-sd) is ${myMean} +- ${mySD}`)
+
+// Testing other functions.
+const mode_data = jsQUEST.QuestMode(q)
+console.log(`MODE: ${mode_data.mode}; PDF: ${mode_data.pdf}`)
+
+console.log(`QuestTrials without the bin size`);
+console.log(jsQUEST.QuestTrials(q))
+console.log(`QuestTrials with the bin size`);
+
+const trials_data = jsQUEST.QuestTrials(q,0.1)
+console.log(trials_data)
+
+trials_data.intensity.forEach(element => {
+    console.log(`The probability is ${jsQUEST.QuestP(q, element - tActual)} at the intensity of ${element}.`)
+})
+
+jsQUEST.QuestBetaAnalysis(q)
