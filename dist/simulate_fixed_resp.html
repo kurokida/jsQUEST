@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="./jsQUEST.js"></script>
+  </head>
+  <body>
+    <p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
+    <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p>
+    <p>Please open the JavaScript console window in your browser.</p>
+  </body>
+  <script>
+    // These values are the defaults for QuestDemo
+    // const tActual = -2
+    const tGuess = 1
+    const tGuessSd = 2
+    const pThreshold = 0.82;
+    const beta = 3.5;
+    const delta = 0.01;
+    const gamma = 0.5;
+    let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+
+    const resp = [1, 0, 1, 1, 0, 1, 0, 1, 0, 1]
+
+    resp.forEach(element => {
+        const tTest = jsQUEST.QuestQuantile(q);	// % Recommended by Pelli (1987), and still our favorite.
+        console.log(`tTest: ${tTest}`)
+        console.log(`Pow: ${Math.pow(10, tTest)}`)
+        console.log(`Resp: ${element}`)
+        q = jsQUEST.QuestUpdate(q, tTest, element);
+        console.log(`Mean: ${jsQUEST.QuestMean(q)}`)
+    })
+
+
+  </script>
+</html>
