@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="./jspsych.js"></script>
+  <script src="./jspsych-psychophysics.js"></script>
+  <script src="./numeric.min.js"></script>
+  <script src="./math.js"></script>
+  <script src="./jsQUEST.js"></script>
+  <link rel="stylesheet" href="./jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present gabor patches.
+
+    // const tActual = -2
+    const trialsDesired = 40
+    const tGuess = 0
+    const tGuessSd = 2
+    const pThreshold = 0.82
+    const beta = 3.5
+    const delta = 0.01
+    const gamma = 0.5
+
+    // const trialsDesired = 10
+
+    let trial_num = 1
+    let tTest
+    // let response
+
+    let myquest = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+
+    const gabor1 = {
+        obj_type: 'gabor',
+        tilt: 30,
+        sf: 0.05,
+        phase: 90,
+        width: 300,
+        sc: 20,
+        contrast: 10,
+        startX: 100,
+        startY:100,
+    }
+
+    // const gabor2 = {
+    //     obj_type: 'gabor',
+    //     tilt: 60,
+    //     sf: 0.05,
+    //     phase: 90,
+    //     width: 200,
+    //     sc: 10,
+    //     contrast: 0.5,
+    //     disableNorm: true,
+    //     startX: 500,
+    //     startY:100,
+    // }
+
+    // const gabor3 = {
+    //     obj_type: 'gabor',
+    //     tilt: 0,
+    //     sf: 0.1,
+    //     phase: 90,
+    //     width: 300,
+    //     sc: 20,
+    //     contrast: 20,
+    //     startX: 100,
+    //     startY:500,
+    //     show_start_time: 500,
+    // }
+
+    // const gabor4 = {
+    //     obj_type: 'gabor',
+    //     tilt: -45,
+    //     sf: 0.02,
+    //     phase: 90,
+    //     width: 400,
+    //     sc: 50,
+    //     contrast: 50,
+    //     startX: 500,
+    //     startY:500,
+    //     show_start_time: 1000,
+    //     motion_start_time: 1000,
+    //     horiz_pix_frame: 5,
+    // }
+
+    const trial = {
+        type: 'psychophysics',
+        // stimuli: [gabor1, gabor2, gabor3, gabor4],
+        stimuli: [gabor1],
+        canvas_height: 700,
+        choices: ['f', 'j'],
+        prompt: 'Press any key to proceed.',
+        on_start: function(trial){
+            // console.log(trial.stimuli[0].contrast)
+
+            tTest = jsQUEST.QuestQuantile(myquest); // Intensity
+
+            console.log(tTest)
+
+            console.log(Math.pow(10, tTest))
+                    
+            trial.stimuli[0].contrast = Math.pow(10, tTest)
+            // trial.stimuli[0].contrast = tTest
+
+                    // const min = 500; // ms
+                    // const max = 3000; // ms
+
+                    // const image_duration = 1000; // ms
+                        
+                    // // The rand_time variable is a duration of the fixation cross in the range of min to max,
+                    // // but note that the actual duration time also depends on the refresh rate of the display.
+                    // const rand_time = min + Math.floor(Math.random() * (max - min));
+
+                    // // The index of the stimuli depends on the order in which they are declared (Line 48)
+                    // //   trial.stimuli[0] means the fixation
+                    // //   trial.stimuli[1] means the image
+                    // trial.stimuli[0].show_start_time = 0 // fixation start time
+                    // trial.stimuli[0].show_end_time = rand_time // fixation end time
+        },
+        on_finish(data){
+            let response
+            if(jsPsych.pluginAPI.compareKeys(data.response, 'f')){
+                response = 1
+            } else {
+                response = 0
+            }
+            // % Update the pdf
+            myquest = jsQUEST.QuestUpdate(myquest, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+            
+        }
+    }
+
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            if (trial_num < trialsDesired){
+                trial_num++
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    jsPsych.init({
+        timeline: [loop_node],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>
