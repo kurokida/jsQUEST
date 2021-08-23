@@ -125,7 +125,8 @@
 % 12/20/04 dgp Added explanation to the print outs.
 % 3/11/05  dgp Added one more decimal place to log C for each trial, as suggested by David Jones.
 %              Loop INPUT until observer gives a value.
-% 3/10/18  dgp Add optional animated plots of trial placement and the shrinking posterior %				pdf.
+% 3/10/18  dgp Add optional animated plots of trial placement and the shrinking posterior 
+%				pdf.
 
 % GetSecs is part of the Psychophysics Toolbox.  If you are running
 % QuestDemo without the Psychtoolbox, we use CPUTIME instead of GetSecs.
@@ -173,14 +174,27 @@ tGuessSd = 2;
 pThreshold=0.82;
 beta=3.5;delta=0.01;gamma=0.5;
 
-Fid = fopen('jsQUEST_MATLAB_simulate_per_trial.csv', 'wt');
-fprintf(Fid, 'repetition, trial, tTest, response, QuestMean, QuestSd\n');
+method = 3; % 1=QuestQuantile, 2=QuestMean, 3=QuestMode
 
-Fid2 = fopen('jsQUEST_MATLAB_simulate.csv', 'wt');
-fprintf(Fid2, 'repetition, create_time, QuestMean, QuestSd, process_time\n');
+if method == 1
+    Fid = fopen('QUEST_simulate_Quantile_per_trial.csv', 'wt');
+    fprintf(Fid, 'repetition, trial, tTest, response, quantile_mean, quantile_sd\n');
+    Fid2 = fopen('QUEST_simulate_Quantile.csv', 'wt');
+    fprintf(Fid2, 'repetition, create_time, quantile_mean, quantile_sd, time_quantile\n');
+elseif method == 2
+    Fid = fopen('QUEST_simulate_Mean_per_trial.csv', 'wt');
+    fprintf(Fid, 'repetition, trial, tTest, response, mean_mean, mean_sd\n');
+    Fid2 = fopen('QUEST_simulate_Mean.csv', 'wt');
+    fprintf(Fid2, 'repetition, create_time, mean_mean, mean_sd, time_mean\n');
+else
+    Fid = fopen('QUEST_simulate_Mode_per_trial.csv', 'wt');
+    fprintf(Fid, 'repetition, trial, tTest, response, mode_mean, mode_sd\n');
+    Fid2 = fopen('QUEST_simulate_Mode.csv', 'wt');
+    fprintf(Fid2, 'repetition, create_time, mode_mean, mode_sd, time_mode\n');
+end
 
-repetition = 10;
-for m=1:repetition
+nSimulation = 49;
+for m=1:nSimulation
 
     baseTime=eval(getSecsFunction);
     q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma);
@@ -201,9 +215,13 @@ for m=1:repetition
     for k=1:trialsDesired
         baseTime=eval(getSecsFunction);
         % Get recommended level.  Choose your favorite algorithm.
-%     	tTest=QuestQuantile(q);	% Recommended by Pelli (1987), and still our favorite.
-    	tTest=QuestMean(q);		% Recommended by King-Smith et al. (1994)
-%         tTest=QuestMode(q);		% Recommended by Watson & Pelli (1983)
+        if method == 1
+            tTest=QuestQuantile(q);	% Recommended by Pelli (1987), and still our favorite.
+        elseif method == 2
+            tTest=QuestMean(q);		% Recommended by King-Smith et al. (1994)
+        else
+            tTest=QuestMode(q);		% Recommended by Watson & Pelli (1983)
+        end
         total_time = total_time + 1000 * (eval(getSecsFunction) - baseTime);
 
         % We are free to test any intensity we like, not necessarily what Quest suggested.
