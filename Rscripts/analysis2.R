@@ -1,7 +1,6 @@
-#library(ggplot2)
 library(tidyverse)
-dat_jsQUEST <- read.table('jsQuest1 (8).csv', sep=",", , header=T) 
-dat_MATLAB <- read.table('MATLAB2.csv', sep=",", , header=T) 
+dat_jsQUEST <- read.table('jsQuest_20210819.csv', sep=",", , header=T) 
+dat_MATLAB <- read.table('originalQuest_20210819.csv', sep=",", , header=T) 
 
 ##################
 ## OS and device information (jsQUEST only)
@@ -102,16 +101,25 @@ mean(DF$estimate[(nSimulation*4+1):(nSimulation*5)]) # Matlab Mean
 mean(DF$estimate[(nSimulation*5+1):(nSimulation*6)]) # Matlab Mode
 
 
-mean(DF$estimate[(nSimulation*2+1):(nSimulation*3)])
+#mean(DF$estimate[(nSimulation*2+1):(nSimulation*3)])
 
 g <- ggplot(DF, aes(x = methods, y = standard_deviation))
 g <- g + geom_boxplot(aes(fill = quest_type))
+g <- g + stat_summary(fun = mean, geom = "point", shape = 21, size = 2., fill = "white")
 g <- g + facet_wrap(~quest_type)
 g <- g + theme(legend.position = 'none')
 g
 
+mean(DF$standard_deviation[1:nSimulation]) # jsQuest Quantile
+mean(DF$standard_deviation[(nSimulation+1):(nSimulation*2)]) # jsQuest Mean
+mean(DF$standard_deviation[(nSimulation*2+1):(nSimulation*3)]) # jsQuest Mode
+mean(DF$standard_deviation[(nSimulation*3+1):(nSimulation*4)]) # Matlab Quantile
+mean(DF$standard_deviation[(nSimulation*4+1):(nSimulation*5)]) # Matlab Mean
+mean(DF$standard_deviation[(nSimulation*5+1):(nSimulation*6)]) # Matlab Mode
+
 g <- ggplot(DF, aes(x = methods, y = processing_time))
 g <- g + geom_boxplot(aes(fill = quest_type))
+g <- g + stat_summary(fun = mean, geom = "point", shape = 21, size = 2., fill = "white")
 g <- g + facet_wrap(~quest_type)
 g <- g + theme(legend.position = 'none')
 g
@@ -120,17 +128,17 @@ g
 
 
 #g <- ggplot(dat_jsQUEST, aes(x = x_data, y = y_data))
-g <- ggplot(dat3, aes(x = methods, y = estimate))
-g <- g + geom_boxplot()
-g <- g + geom_jitter(size = 0.2)
-g
-
-g <- ggplot(dat3, aes(x = methods, y = standard_deviation))
-g <- g + geom_boxplot()
-g
-
-# Time required to calculate the intensity of the stimulus
-g <- ggplot(dat3, aes(x = methods, y = processing_time))
-g <- g + geom_boxplot()
-#g <- g + geom_jitter(size = 0.2)
-g
+# g <- ggplot(dat3, aes(x = methods, y = estimate))
+# g <- g + geom_boxplot()
+# g <- g + geom_jitter(size = 0.2)
+# g
+# 
+# g <- ggplot(dat3, aes(x = methods, y = standard_deviation))
+# g <- g + geom_boxplot()
+# g
+# 
+# # Time required to calculate the intensity of the stimulus
+# g <- ggplot(dat3, aes(x = methods, y = processing_time))
+# g <- g + geom_boxplot()
+# #g <- g + geom_jitter(size = 0.2)
+# g
