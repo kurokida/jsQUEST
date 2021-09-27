@@ -43,3 +43,5 @@ Rscripts/test4.csv
 Rscripts/time0805.png
 Rscripts/tTestの時間の比較.png
 Rscripts/推定値の比較.png
+Rscripts/*.png
+Rscripts/*.pdf

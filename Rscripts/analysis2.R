@@ -91,6 +91,11 @@ g <- g + stat_summary(fun = mean, geom = "point", shape = 21, size = 2., fill = 
 #g <- g + stat_summary(fun = mean, geom = "point", color = "#FC4E07")
 g <- g + facet_wrap(~quest_type)
 g <- g + theme(legend.position = 'none')
+g <- g + xlab("Intensity method") + ylab("Log threshold")
+g <- g + scale_y_continuous(breaks=seq(-2.6, 1.6, 0.2))
+g <- g + theme(text = element_text(size = 24))
+g <- g + theme(axis.text.x = element_text(size = 14, margin = margin(10,10,10,10)))
+g <- g + theme(axis.text.y = element_text(size = 14, margin = margin(2,10,2,10)))
 g
 
 mean(DF$estimate[1:nSimulation]) # jsQuest Quantile
@@ -108,6 +113,10 @@ g <- g + geom_boxplot(aes(fill = quest_type))
 g <- g + stat_summary(fun = mean, geom = "point", shape = 21, size = 2., fill = "white")
 g <- g + facet_wrap(~quest_type)
 g <- g + theme(legend.position = 'none')
+g <- g + xlab("Intensity method") + ylab("Standard deviation of the final p.d.f.")
+g <- g + theme(text = element_text(size = 24))
+g <- g + theme(axis.text.x = element_text(size = 14, margin = margin(10,10,10,10)))
+g <- g + theme(axis.text.y = element_text(size = 14, margin = margin(2,10,2,10)))
 g
 
 mean(DF$standard_deviation[1:nSimulation]) # jsQuest Quantile
@@ -122,10 +131,17 @@ g <- g + geom_boxplot(aes(fill = quest_type))
 g <- g + stat_summary(fun = mean, geom = "point", shape = 21, size = 2., fill = "white")
 g <- g + facet_wrap(~quest_type)
 g <- g + theme(legend.position = 'none')
+g <- g + xlab("Intensity method") + ylab("Procssing time (ms)")
+g <- g + theme(text = element_text(size = 24))
+g <- g + theme(axis.text.x = element_text(size = 14, margin = margin(10,10,10,10)))
+g <- g + theme(axis.text.y = element_text(size = 14, margin = margin(2,10,2,10)))
 g
 
+tmp <- DF$processing_time[1:nSimulation]
+summary(tmp)
 
-
+mean(DF$processing_time[(nSimulation*2+1):(nSimulation*3)])
+#mode(DF$processing_time[(nSimulation*2+1):(nSimulation*3)])
 
 #g <- ggplot(dat_jsQUEST, aes(x = x_data, y = y_data))
 # g <- ggplot(dat3, aes(x = methods, y = estimate))
