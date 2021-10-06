@@ -1,4 +1,4 @@
-class QuestPlus {
+class jsquest {
     constructor(F, stimDomain, paramDomain, respDomain, stopRule, stopCriterion, minNTrials, maxNTrials){
 
         // 多次元配列の判定？
@@ -8,8 +8,8 @@ class QuestPlus {
         this.F = F
         this.stimDomain = stimDomain
         this.paramDomain = paramDomain
-        this.comb_stimDomain = stimDomain.reduce(combvec)
-        this.comb_paramDomain = paramDomain.reduce(combvec)
+        this.comb_stimDomain = stimDomain.reduce(jsquest.combvec)
+        this.comb_paramDomain = paramDomain.reduce(jsquest.combvec)
 
         // default priors 引数で指定されたものにも対応する必要あり
         const priors = []
@@ -19,7 +19,7 @@ class QuestPlus {
             // priors.push(unit_vector)
         })
         this.priors = priors
-        const comb_priors = priors.reduce(combvec)
+        const comb_priors = priors.reduce(jsquest.combvec)
         let mulitiplied_priors = []
 
         console.log(Array.isArray(comb_priors[0]))
@@ -267,30 +267,32 @@ class QuestPlus {
         const s = numeric.sum(new_posterior)
         this.normalized_posteriors = numeric.div(new_posterior, s)
     }
+
+    // It is similar to the combvec function in MATLAB.
+    // https://jp.mathworks.com/help/deeplearning/ref/combvec.html?lang=en
+    static combvec(a, b, divide_flag){
+        if (divide_flag === "undefined") divide_flag = true
+        let output = [] 
+        if (Array.isArray(a) && divide_flag){
+            divide_flag = false
+            a.forEach(element => {
+                const res = jsquest.combvec(element, b, divide_flag)
+                output = output.concat(res)
+            })
+        } else if (Array.isArray(b)){
+            b.forEach(element => {
+                output.push(jsquest.combvec(a, element, divide_flag))
+            })
+        }
+        else {
+            if (!Array.isArray(a)) a = [a]
+            return a.concat(b)
+        }
+        return output
+    }
+
 }
 
-// It is similar to the combvec function in MATLAB.
-// https://jp.mathworks.com/help/deeplearning/ref/combvec.html?lang=en
-combvec = function(a, b, divide_flag){
-    if (divide_flag === "undefined") divide_flag = true
-    let output = [] 
-    if (Array.isArray(a) && divide_flag){
-        divide_flag = false
-        a.forEach(element => {
-            const res = combvec(element, b, divide_flag)
-            output = output.concat(res)
-        })
-    } else if (Array.isArray(b)){
-        b.forEach(element => {
-            output.push(combvec(a, element, divide_flag))
-        })
-    }
-    else {
-        if (!Array.isArray(a)) a = [a]
-        return a.concat(b)
-    }
-    return output
-}
 
 multiply_reducer = function(a, b) {
     return a*b

@@ -48,7 +48,7 @@
       stimDomain = numeric.linspace(-10, 10, 50);
       paramDomain = numeric.linspace(-8,8,30);
 
-      let qp1 = new QuestPlus([func_resp0, func_resp1], [stimDomain], [paramDomain], [0,1])
+      let qp1 = new jsquest([func_resp0, func_resp1], [stimDomain], [paramDomain], [0,1])
 
       // let qp1 = new QuestPlus(pf, 
       //   [[1, 2, 3], [4, 5, 6]], 
@@ -68,7 +68,6 @@
       // console.log(qp1.getParamEsts('mean'))
       
       let intensity = qp1.getTargetStim()
-      // console.log()
       qp1.update(intensity, 1)
       let intensity2 = qp1.getTargetStim()
       console.log(intensity2)
