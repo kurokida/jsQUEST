@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+    <script src="./numeric.js"></script>
+    <script src="src/jsQuestPlus.js"></script>
+  </head>
+  <body>
+    <p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
+    <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+  </body>
+  <script>
+      // pf = function(s, t, u, v){
+      //     return s + t + u + v
+
+      // }
+
+      // https://jp.mathworks.com/help/stats/normcdf.html
+      // これを見ながら動作確認
+      // const mu = 2
+      // const sigma = 1
+
+      // console.log(normcdf(-2, mu, sigma))
+      // console.log(normcdf(-1, mu, sigma))
+      // console.log(normcdf(-0, mu, sigma))
+      // console.log(normcdf(1, mu, sigma))
+      // console.log(normcdf(2, mu, sigma))
+
+      const mu = 7
+      const sigma = 1
+
+      // psychonomic_function = function(stim, param){
+      //   return (1 - normcdf(stim, mu, 1)), )
+      // }
+
+      // console.log(normcdf(-10, -8, 1)) // OK!
+
+      function func_resp0(stim, param) {
+        return 1 - normcdf(stim, param, sigma)
+      }
+
+      function func_resp1(stim, param) {
+        return normcdf(stim, param, sigma)
+      }
+
+
+      stimDomain = numeric.linspace(-10, 10, 50);
+      paramDomain = numeric.linspace(-8,8,30);
+
+      let qp1 = new QuestPlus([func_resp0, func_resp1], [stimDomain], [paramDomain], [0,1])
+
+      // let qp1 = new QuestPlus(pf, 
+      //   [[1, 2, 3], [4, 5, 6]], 
+      //   [[10, 20, 30], [40, 50]],
+      //   [0,1])
+      console.log(qp1)
+
+      qp1.initialise()
+
+      // 確認済み Matlabの値と同じ
+      // console.log(qp1.likelihoods[0][0][0])
+      // console.log(qp1.likelihoods[1][0][0])
+      // console.log(qp1.likelihoods[0][2][3])
+      // console.log(qp1.likelihoods[1][4][5])
+
+
+      // console.log(qp1.getParamEsts('mean'))
+      
+      let intensity = qp1.getTargetStim()
+      // console.log()
+      qp1.update(intensity, 1)
+      let intensity2 = qp1.getTargetStim()
+      console.log(intensity2)
+
+      // a=[numeric.log([3]), numeric.log([2]), numeric.log([0])]
+      // a=numeric.log([3, 2, 1, 0])
+      // console.log(a)
+      // a2 = numeric.mul(0,a)
+      // b=numeric.isNaN(a2)
+      // console.log(b)
+      // console.log(numeric.sum(a2))
+
+
+      // a2 = [1, 2, 3, NaN]
+      // c=a2.reduce((a,b) => a + (isNaN(b) ? 0: b))
+      // console.log(c)
+
+
+      // const aryMax = function (a, b) {return Math.max(a, b);}
+      // const aryMin = function (a, b, index) {
+      //   console.log(index)
+      //   return Math.min(a, b);
+      // }
+      // let ary = [5, 2, 3, 1, 10];
+      // console.log(find_min_index(ary))
+      // // let max = ary.reduce(aryMax); // => 10
+      // let min = ary.reduce(aryMin); // => 1
+      // console.log(min)
+
+      // console.log(qp1.speak())
+
+    //   console.log(numeric.linspace(2,5,4))
+    //   console.log(numeric.linspace(1,1,4))
+
+      // function calc(s,t,x,y,z){
+      //     return s + t +x + y + z
+      // }
+
+      // const params = [1, 2, 3]
+      // const params2 = [3,4]
+      // console.log(calc(...params2, ...params))
+
+      // let tmp1 = [[1,2,3],[4,5,6]]
+      // let tmp2 = [tmp1, tmp1]
+      // console.log(tmp2)
+      // // console.log(numeric.mul(tmp2, 10)) // ok
+      // let tmp3 = [10, 5, 2]
+      // // console.log(numeric.mul(tmp2, tmp3)) // これはだめ
+      // // console.log(numeric.mul(tmp1, tmp3)) // これはだめ
+      // console.log(numeric.mul(tmp3, tmp3)) // ok
+
+
+  </script>
+</html>
