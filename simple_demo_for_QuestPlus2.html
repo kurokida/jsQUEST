@@ -37,11 +37,11 @@
       // console.log(normcdf(-10, -8, 1)) // OK!
 
       function func_resp0(stim, param) {
-        return 1 - normcdf(stim, param, sigma)
+        return 1 - jsquest.normcdf(stim, param, sigma)
       }
 
       function func_resp1(stim, param) {
-        return normcdf(stim, param, sigma)
+        return jsquest.normcdf(stim, param, sigma)
       }
 
 

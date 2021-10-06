@@ -26,7 +26,7 @@ class jsquest {
 
         if (Array.isArray(comb_priors[0])){
             comb_priors.forEach(element => {
-                mulitiplied_priors.push(element.reduce(multiply_reducer))
+                mulitiplied_priors.push(element.reduce(jsquest.multiply_reducer))
             })    
         } else {
             mulitiplied_priors = comb_priors
@@ -217,7 +217,7 @@ class jsquest {
         })
         // console.log(EH)
         // for (let i = 0; i < elements_of_EH)
-        const index = find_min_index(EH)
+        const index = jsquest.find_min_index(EH)
         // let stim = this.stimDomain[index]
         let stim = this.comb_stimDomain[index]
         // console.log(index)
@@ -234,7 +234,7 @@ class jsquest {
                 // this.stimDomain[index] = domain
                 const tmp1 = numeric.sub(this.stimDomain[index], element)
                 const tmp2 = numeric.abs(tmp1)
-                const idx0 = find_min_index(tmp2)
+                const idx0 = jsquest.find_min_index(tmp2)
 
                 const targIdx = this.stimDomain.indexOf(stim[index])
 
@@ -291,38 +291,35 @@ class jsquest {
         return output
     }
 
-}
-
-
-multiply_reducer = function(a, b) {
-    return a*b
-}
-
-min_reducer = function (a, b) {
-    return Math.min(a, b);
-}
-
-function find_min_index(array){
-    const min = array.reduce(min_reducer)
-    return array.indexOf(min)    
-}
-
-// https://stackoverflow.com/questions/5259421/cumulative-distribution-function-in-javascript
-// ただし引数の順番を変更して、一番目をxとしている
-function normcdf(x, mean, sigma) 
-{
-    const z = (x-mean)/Math.sqrt(2*sigma*sigma);
-    const t = 1/(1+0.3275911*Math.abs(z));
-    const a1 =  0.254829592;
-    const a2 = -0.284496736;
-    const a3 =  1.421413741;
-    const a4 = -1.453152027;
-    const a5 =  1.061405429;
-    const erf = 1-(((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-z*z);
-    let sign = 1;
-    if(z < 0)
-    {
-        sign = -1;
+    static multiply_reducer(a, b) {
+        return a * b
     }
-    return (1/2)*(1+sign*erf);
+    
+    static find_min_index(array){
+        const min = array.reduce(min_reducer)
+        return array.indexOf(min)    
+
+        function min_reducer(a, b) {
+            return Math.min(a, b);
+        }
+    }
+    
+    // https://stackoverflow.com/questions/5259421/cumulative-distribution-function-in-javascript
+    // ただし引数の順番を変更して、一番目をxとしている
+    static normcdf(x, mean, sigma) {
+        const z = (x-mean)/Math.sqrt(2*sigma*sigma);
+        const t = 1/(1+0.3275911*Math.abs(z));
+        const a1 =  0.254829592;
+        const a2 = -0.284496736;
+        const a3 =  1.421413741;
+        const a4 = -1.453152027;
+        const a5 =  1.061405429;
+        const erf = 1-(((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-z*z);
+        let sign = 1;
+        if(z < 0)
+        {
+            sign = -1;
+        }
+        return (1/2)*(1+sign*erf);
+    }    
 }
