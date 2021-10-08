@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+        <script src="./numeric.js"></script>
+        <script src="src/jsQuestPlus.js"></script>
+    </head>
+<body>
+    <p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
+    <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+</body>
+<script>
+    // Psychometric function corresponding to the first response
+    // This is the same as jsquest.weibull
+
+    function func_resp0(freq, contrast, threshold, c0, cf){
+        const max = Math.max(threshold, c0 + cf*freq)
+        return jsquest.weibull(contrast, max, 3, 0.5, 0.01)
+    }
+
+    function func_resp1(stim, threshold, slope, guess, lapse) {
+        return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
+    }
+
+    const spatial_frequency = jsquest.getArray_with_fix_interval(0, 2, 40)
+    const contrast = jsquest.getArray_with_fix_interval(-50, 2, 0)
+    const threshold = jsquest.getArray_with_fix_interval(-30, -2, -50)
+    const c0 = jsquest.getArray_with_fix_interval(-40, -2, -60)
+    const cf = jsquest.getArray_with_fix_interval(0.8, 0.2, 1.6)
+
+    simulated_answers = [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1]
+
+    const jsqp = new jsquest([func_resp0, func_resp1], [spatial_frequency, contrast], [threshold, c0, cf], [0,1])
+
+    console.log(simulated_answers.length)
+    for (let i = 0; i < simulated_answers.length; i++){
+        const intensity = jsqp.getTargetStim()
+        console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]+1}`)
+        jsqp.update(intensity, simulated_answers[i])
+
+    }
+
+    console.log(jsqp.getPara())
+
+</script>
+</html>

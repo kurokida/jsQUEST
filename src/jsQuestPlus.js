@@ -22,7 +22,7 @@ class jsquest {
         const comb_priors = priors.reduce(jsquest.combvec)
         let mulitiplied_priors = []
 
-        console.log(Array.isArray(comb_priors[0]))
+        // console.log(Array.isArray(comb_priors[0]))
 
         if (Array.isArray(comb_priors[0])){
             comb_priors.forEach(element => {
@@ -65,29 +65,29 @@ class jsquest {
 
             
         const likelihoods = []
+        // console.log(this.F)
 
         this.F.forEach(func => {
+            // console.log(func)
             const likelihoods_for_single_resp = []
             this.comb_stimDomain.forEach(stim => {
-                const each_stimDomain = []
+                const probabilities = []
                 this.comb_paramDomain.forEach(param => {
                     if (Array.isArray(stim)) {
                         if (Array.isArray(param)) {
-                            each_stimDomain.push(func(...stim, ...param))
+                            probabilities.push(func(...stim, ...param))
                         } else {
-                            each_stimDomain.push(func(...stim, param))
+                            probabilities.push(func(...stim, param))
                         }
                     } else {
                         if (Array.isArray(param)) {
-                            each_stimDomain.push(func(stim, ...param))
+                            probabilities.push(func(stim, ...param))
                         } else {
-                            each_stimDomain.push(func(stim, param))
+                            probabilities.push(func(stim, param))
                         }
                     }
-                    // each_stimDomain.push(func(...stim, ...param))
-    
                 })
-                likelihoods_for_single_resp.push(each_stimDomain)
+                likelihoods_for_single_resp.push(probabilities)
             })
             likelihoods.push(likelihoods_for_single_resp)    
         })
@@ -175,23 +175,19 @@ class jsquest {
             const elements_of_pk = []
             const elements_of_posteriors = []
             const elements_of_entropy = []
-            stim_param.forEach(params => { // For each stimulus parameters
-                const pdf = numeric.mul(this.normalized_posteriors, params)
+            stim_param.forEach(paramsL => { // For each stimulus domain
+                const pdf = numeric.mul(this.normalized_posteriors, paramsL)
                 elements_of_postTimesL.push(pdf)
                 const s = numeric.sum(pdf)
                 elements_of_pk.push(s)
                 const posterior = numeric.div(pdf, s)
                 elements_of_posteriors.push(posterior)
 
-                const tmp4 = numeric.mul(posterior, numeric.log(posterior))
+                const tmp_entropy = numeric.mul(posterior, numeric.log(posterior))
 
-                // if (isNaN(tmp4[0])) {
-                //     console.log("NaN")
-                // } else {
-                const H = (-1) * tmp4.reduce((a,b) => a + (isNaN(b) ? 0: b), 0) // nansum function 
+                const H = (-1) * tmp_entropy.reduce((a,b) => a + (isNaN(b) ? 0: b), 0) // nansum function 
                 // https://stackoverflow.com/questions/50956086/javascript-equivalent-of-nansum-from-matlab
                 elements_of_entropy.push(H)
-                // }
             })
             postTimesL.push(elements_of_postTimesL)
             pk.push(elements_of_pk)
@@ -268,6 +264,11 @@ class jsquest {
         this.normalized_posteriors = numeric.div(new_posterior, s)
     }
 
+    getPara(){
+        const idx = jsquest.find_max_index(this.normalized_posteriors)
+        return this.comb_paramDomain[idx]
+    }
+
     // It is similar to the combvec function in MATLAB.
     // https://jp.mathworks.com/help/deeplearning/ref/combvec.html?lang=en
     static combvec(a, b, divide_flag){
@@ -304,8 +305,18 @@ class jsquest {
         }
     }
     
+    static find_max_index(array){
+        const max = array.reduce(max_reducer)
+        return array.indexOf(max)    
+
+        function max_reducer(a, b) {
+            return Math.max(a, b);
+        }
+    }
+
     // https://stackoverflow.com/questions/5259421/cumulative-distribution-function-in-javascript
     // ただし引数の順番を変更して、一番目をxとしている
+    // erf関数を使用する方法もあるようだ
     static normcdf(x, mean, sigma) {
         const z = (x-mean)/Math.sqrt(2*sigma*sigma);
         const t = 1/(1+0.3275911*Math.abs(z));
@@ -321,5 +332,26 @@ class jsquest {
             sign = -1;
         }
         return (1/2)*(1+sign*erf);
-    }    
+    }
+
+    static weibull(stim, threshold, slope, guess, lapse) {
+        const tmp = slope * (stim - threshold)/20
+        return lapse - (guess + lapse -1)*Math.exp(-Math.pow(10, tmp))
+    }
+
+    static simulate_weibull_two_resp(current_intensity, true_threshold, true_slope, true_guess, true_lapse){
+        // console.log(jsquest.weibull(current_intensity, true_threshold, true_slope, true_guess, true_lapse))
+        if (Math.random() > jsquest.weibull(current_intensity, true_threshold, true_slope, true_guess, true_lapse)){
+            return 1 // yes
+        } else {
+            return 0 // no
+        }
+    } 
+
+    static getArray_with_fix_interval(start, interval, end){
+        const tmp = Math.floor((end-start)/interval)
+        const adjusted_end = start + interval * tmp
+        return numeric.linspace(start, adjusted_end, tmp+1)
+    }
+
 }

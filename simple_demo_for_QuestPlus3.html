@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+    <script src="./numeric.js"></script>
+    <script src="src/jsQuestPlus.js"></script>
+  </head>
+  <body>
+    <p>This program simulates the QUEST method: a Bayesian adaptive psychometric method (<a href="https://link.springer.com/article/10.3758/BF03202828">Watson & Pelli, 1983</a>).</p>
+    <p>This program is a rewrite of <a href="http://psychtoolbox.org/docs/QuestDemo">QuestDemo</a>, which is distributed as a part of <a href="http://psychtoolbox.org/">Psychtoolbox</a>, using <a href= "https://www.jspsych.org/">jsPsych</a> and <a href="https://github.com/kurokida/jsQUEST">jsQUEST</a>.</p>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+  </body>
+  <script>
+      // Weibull関数で動作確認
+      const mu = 7
+      const sigma = 1
+
+      function func_resp0(stim, threshold, slope, guess, lapse) {
+          const tmp = slope * (stim - threshold)/20
+          return lapse - (guess + lapse -1)*Math.exp(-Math.pow(10, tmp))
+      }
+
+      function func_resp1(stim, threshold, slope, guess, lapse) {
+          return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
+      }
+
+      console.log(jsquest.weibull(-40, -40, 2, 0.5, 0))
+
+      const stimDomain = numeric.linspace(-40, 0);
+    //   console.log(stimDomain)
+      const threshold_domain = numeric.linspace(-40,0);
+    //   console.log(threshold_domain)
+      const slope_domain = numeric.linspace(2,5)
+    //   console.log(slope_domain)
+      const guess_domain = [0.5]
+      const lapse_domain = numeric.linspace(0, 0.04, 5)
+    //   console.log(lapse_domain)
+
+      function func2(stim, threshold, slope, guess, lapse) {
+        return 1-jsquest.weibull(stim, threshold, slope, guess, lapse)
+      }
+
+      // let qp1 = new jsquest([func_resp0, func_resp1], [stimDomain], [threshold_domain, slope_domain, guess_domain, lapse_domain], [0,1])
+
+      // こういう書き方もできる
+      let qp1 = new jsquest([jsquest.weibull, func2], [stimDomain], [threshold_domain, slope_domain, guess_domain, lapse_domain], [0,1])
+
+      // let qp1 = new QuestPlus(pf, 
+      //   [[1, 2, 3], [4, 5, 6]], 
+      //   [[10, 20, 30], [40, 50]],
+      //   [0,1])
+      console.log(qp1)
+      
+      // テストで使えるかも
+      // let intensity = qp1.getTargetStim()
+      // console.log(intensity) // -18
+      // qp1.update(intensity, 0)
+      // let intensity2 = qp1.getTargetStim()
+      // console.log(intensity2) // -8
+
+
+      const nTrials = 40;
+      const true_threshold = -20
+      const true_slope = 3
+      const true_guess = 0.5
+      const true_lapse = 0.02
+      for (let i = 0; i < nTrials; i++){
+        const intensity = qp1.getTargetStim()
+        console.log(intensity) // -18
+
+        const resp = jsquest.simulate_weibull_two_resp(intensity, true_threshold, true_slope, true_guess, true_lapse)
+        console.log(resp)
+        qp1.update(intensity, resp)
+       
+      }
+
+      // jsquest.find_max_index()
+      console.log(qp1.getPara())
+
+
+      // a=[numeric.log([3]), numeric.log([2]), numeric.log([0])]
+      // a=numeric.log([3, 2, 1, 0])
+      // console.log(a)
+      // a2 = numeric.mul(0,a)
+      // b=numeric.isNaN(a2)
+      // console.log(b)
+      // console.log(numeric.sum(a2))
+
+
+      // a2 = [1, 2, 3, NaN]
+      // c=a2.reduce((a,b) => a + (isNaN(b) ? 0: b))
+      // console.log(c)
+
+
+      // const aryMax = function (a, b) {return Math.max(a, b);}
+      // const aryMin = function (a, b, index) {
+      //   console.log(index)
+      //   return Math.min(a, b);
+      // }
+      // let ary = [5, 2, 3, 1, 10];
+      // console.log(find_min_index(ary))
+      // // let max = ary.reduce(aryMax); // => 10
+      // let min = ary.reduce(aryMin); // => 1
+      // console.log(min)
+
+      // console.log(qp1.speak())
+
+    //   console.log(numeric.linspace(2,5,4))
+    //   console.log(numeric.linspace(1,1,4))
+
+      // function calc(s,t,x,y,z){
+      //     return s + t +x + y + z
+      // }
+
+      // const params = [1, 2, 3]
+      // const params2 = [3,4]
+      // console.log(calc(...params2, ...params))
+
+      // let tmp1 = [[1,2,3],[4,5,6]]
+      // let tmp2 = [tmp1, tmp1]
+      // console.log(tmp2)
+      // // console.log(numeric.mul(tmp2, 10)) // ok
+      // let tmp3 = [10, 5, 2]
+      // // console.log(numeric.mul(tmp2, tmp3)) // これはだめ
+      // // console.log(numeric.mul(tmp1, tmp3)) // これはだめ
+      // console.log(numeric.mul(tmp3, tmp3)) // ok
+
+
+  </script>
+</html>
