@@ -150,14 +150,18 @@ class jsquest {
     getParamEsts(thresholdingRule, roundStimuliToDomain){
         switch (thresholdingRule){
             case 'mean':
-                // console.log(this.paramDomain)
-                console.log(this.posteriors)
-                const params = numeric.mul(this.paramDomain, this.posteriors)
+                const params = numeric.transpose(this.comb_paramDomain)
                 const output = []
-                params.forEach(element => output.push(numeric.sum(element)))
+                params.forEach(data => {
+                    const tmp = numeric.mul(data, this.normalized_posteriors)
+                    output.push(numeric.sum(tmp))
+                })
                 return output
-                // console.log(numeric.mul([3],[4]))
-                // break; // returnするならbreak不要
+            case 'mode':
+                const idx = jsquest.find_max_index(this.normalized_posteriors)
+                return this.comb_paramDomain[idx]
+            default:
+                alert(`The argument of the getParamEsts must be one of : "mean" | "median" | "mode".`)
         }
     }
 
