@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="./numeric.js"></script>
+        <script src="src/jsQuestPlus.js"></script>
+    </head>
+<body>
+    <p>This program simulates the example for estimation of contrast threshold {1, 1, 2} in <a href="https://doi.org/10.1167/17.3.10">Watson (2017)</a>.</p>
+    <p>Watson (2017) wrote that:</p>
+    <blockquote>
+        <p>The first is a very simple case in which there is a single stimulus dimension (contrast), and only a single psychometric parameter (threshold). This is the case for which the original QUEST was designed.</p>
+    </blockquote>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+</body>
+<script>
+    // Example: 1 stimulus parameter x 1 PF parameter x 2 responses
+    
+    // Psychometric function corresponding to the first response (response = 0)
+    // You can specify the function or use the weibull function jsQuest provides.
+    function func_resp0(stim, threshold, slope, guess, lapse) {
+        // const tmp = slope * (stim - threshold)/20
+        // return lapse - (guess + lapse -1)*Math.exp(-Math.pow(10, tmp))
+
+        return jsquest.weibull(stim, threshold, slope, guess, lapse) 
+    }
+
+    // Psychometric function corresponding to the second response (response = 1).
+    function func_resp1(stim, threshold, slope, guess, lapse) {
+        return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
+    }
+
+    let stim_domain = numeric.linspace(-40, 0)
+    let threshold_domain = numeric.linspace(-40,0)
+    let slope_domain = [3.5]
+    let guess_domain = [0.5]
+    let lapse_domain = [0.02]
+
+    // These values are written in Watson (2017)
+    // Note that, in Watson (2017), the first answer corresponds to 1 and the second answer to 2.
+    const simulated_answers = [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    const simulated_stim = [-18, -22, -25, -28, -30, -22, -13, -15, -16, -18, -19, -20, -21, -22, -23, -19, -20, -20, -18, -18, -19, -17, -17, -18, -18, -18, -19, -19, -19, -19, -19, -19]
+
+    // jsqp means jsQuestPlus. You can use any variable name you like.
+    const jsqp = new jsquest(
+        [func_resp0, func_resp1], [stim_domain], [threshold_domain, slope_domain, guess_domain, lapse_domain])
+
+    console.log(jsqp)
+
+    for (let i = 0; i < simulated_answers.length; i++){
+        const intensity = jsqp.getStimParams()
+        if (intensity !== simulated_stim[i]) alert(`Check trial ${i+1}`)
+        console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]}`)
+        jsqp.update(intensity, simulated_answers[i])
+    }
+
+    const estimates = jsqp.getEstimates()
+    console.log(estimates)
+
+    console.log(`Watson (2017) wrote the estimated threshold as -20.`)
+    console.log(`jsQuestPlus estimates as ${estimates[0]}.`)
+</script>
+</html>

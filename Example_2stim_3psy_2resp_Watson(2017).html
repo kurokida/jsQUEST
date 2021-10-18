@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+        <script src="./numeric.js"></script>
+        <script src="src/jsQuestPlus.js"></script>
+    </head>
+<body>
+    <p>This program simulates the example for Contrast sensitivity function {2, 3, 2} in <a href="https://doi.org/10.1167/17.3.10">Watson (2017)</a>.</p>
+    <p>Watson (2017) wrote that:</p>
+    <blockquote>
+    <p>In this example, we illustrate a case of multiple stimulus dimensions. 
+    The example describes rapid estimation of a parametrically defined contrast sensitivity function. 
+    Our approach is effectively the same as that of <a href="https://jov.arvojournals.org/article.aspx?articleid=2158170">Lesmes et al. (2010)</a> 
+    except that we use a different model for the contrast sensitivity function. 
+    Our main point is to show that their qCSF method can be easily accommodated into the QUEST+ framework. 
+    </p>
+    </blockquote>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+</body>
+<script>
+    // Example: 2 stimulus parameters x 3 PF parameters x 2 responses
+    
+    // Psychometric function corresponding to the first response (response = 0)
+    // You can specify the function or use the weibull function jsQuest provides.
+    function func_resp0(freq, contrast, threshold, c0, cf){
+        const max = Math.max(threshold, c0 + cf*freq)
+        return jsquest.weibull(contrast, max, 3, 0.5, 0.01)
+    }
+
+    // Psychometric function corresponding to the second response (response = 1).
+    function func_resp1(freq, contrast, threshold, c0, cf){
+        return 1 - func_resp0(freq, contrast, threshold, c0, cf) 
+    }
+
+    const spatial_frequency = jsquest.getArray_with_fix_interval(0, 2, 40)
+    const contrast = jsquest.getArray_with_fix_interval(-50, 2, 0)
+    const threshold = jsquest.getArray_with_fix_interval(-50, 2, -30)
+    const c0 = jsquest.getArray_with_fix_interval(-60, 2, -40)
+    const cf = jsquest.getArray_with_fix_interval(0.8, 0.2, 1.6)
+
+    // These values are written in Watson (2017)
+    // Note that, in Watson (2017), the first answer corresponds to 1 and the second answer to 2.
+    const simulated_answers = [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1]
+    const simulated_stim = [[40, 0], [40, -4], [34, 0], [36, 0], [0, -38], [38, 0], [0, -40], [38, 0], [18, -26], [18, -26], 
+        [40, 0], [0, -36], [0, -36], [40, 0], [20, -26], [20, -26], [40, -2], [22, -26], [40, -6], [20, -26], [40, 0], 
+        [18, -26], [40, 0], [18, -26], [0, -32], [0, -32], [0, -34], [0, -34], [40, 0], [18, -26], [38, 0], [18, -26]]
+
+    // jsqp means jsQuestPlus. You can use any variable name you like.
+    const jsqp = new jsquest([func_resp0, func_resp1], [spatial_frequency, contrast], [threshold, c0, cf])
+    console.log(jsqp)
+
+    console.log(simulated_answers.length)
+    for (let i = 0; i < simulated_answers.length; i++){
+        const intensity = jsqp.getStimParams()
+
+        // Spatial frequency
+        if (intensity[0] !== simulated_stim[i][0]) console.error(`Check the first stim parameter of trial ${i+1}. ${intensity}`)
+        
+        // Contrast
+        if (intensity[1] !== simulated_stim[i][1]) console.error(`Check the second stim parameter of trial ${i+1}. ${intensity}`)
+        
+        console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]+1}`)
+        jsqp.update(intensity, simulated_answers[i])
+    }
+
+    const estimates = jsqp.getEstimates()
+    console.log(`Watson (2017) wrote the estimated threshold, C0, and Cf values as -32, -56, and 1.4, respectively.`)
+    console.log(`jsQuestPlus estimates as follows:`)
+    console.log(`Threshold estimate is ${estimates[0]}`)
+    console.log(`C0 estimate is ${estimates[1]}`)
+    console.log(`Cf estimate is ${estimates[2]}`)
+
+</script>
+</html>
