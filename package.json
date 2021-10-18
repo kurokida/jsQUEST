@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.0",
+    "eslint": "^8.0.1",
     "rollup": "^2.50.1",
     "rollup-plugin-sourcemaps": "^0.6.3"
   },

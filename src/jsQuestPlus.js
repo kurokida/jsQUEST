@@ -3,6 +3,10 @@
 //  https://github.com/BrainardLab/mQUESTPlus
 // Kudos to the developers!
 // 
+/* global numeric */
+
+console.log('jsQuestPlus Version 0.1')
+
 class jsquest {
     // PF menas Psychometric Functions
     constructor(PF, stim_params, PF_params){
@@ -62,7 +66,7 @@ class jsquest {
     // Same as the getParamEsts()
     getEstimates(thresholdingRule = 'mode', roundStimuliToDomain = true){
         switch (thresholdingRule){
-            case 'mean': 
+            case 'mean': {
                 const params = numeric.transpose(this.comb_PF_params)
                 const estimates_mean = []
                 const deviation = []
@@ -85,6 +89,7 @@ class jsquest {
                 } else {
                     return estimates_mean
                 }
+            }
             // case 'median':
                 // Pending
                 // The following code is a faithful reproduction of the Matlab code.
@@ -98,9 +103,10 @@ class jsquest {
                 // const abs_array = numeric.abs(numeric.sub(cumsum_array, 0.5))
                 // const idx_median = jsquest.find_min_index(abs_array)
                 // return this.comb_PF_params[idx_median]
-            case 'mode':
+            case 'mode': {
                 const idx_mode = jsquest.find_max_index(this.normalized_posteriors)
                 return this.comb_PF_params[idx_mode]
+            }
             default:
                 alert(`The argument of the getEstimates must be "mean" or "mode".`)
         }
@@ -120,7 +126,7 @@ class jsquest {
     update(stim, resp){
         const stimIdx = this.comb_stim_params.indexOf(stim)
 
-        if (!this.hasOwnProperty('stim_list')){
+        if (!Object.prototype.hasOwnProperty.call(this, 'stim_list')){
             this.stim_list = [stim]
             this.resp_list = [resp]
             this.stim_index_list = [stimIdx]
