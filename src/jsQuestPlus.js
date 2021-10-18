@@ -5,19 +5,17 @@
 // 
 class jsquest {
     // PF menas Psychometric Functions
-    constructor(PF, stim_params, PF_params, responses, stopRule, stopCriterion, minNTrials, maxNTrials){
-
-        // 多次元配列の判定？
-
-        // Fが関数でなかった場合のエラー
-
+    constructor(PF, stim_params, PF_params){
         this.PF = PF
         this.stim_params = stim_params
         this.PF_params = PF_params
+
+        // The combvec function is almost identical to that of MATLAB.
+        // https://jp.mathworks.com/help/deeplearning/ref/combvec.html?lang=en
         this.comb_stim_params = stim_params.reduce(jsquest.combvec) // comb means combined; vec means vectors.
         this.comb_PF_params = PF_params.reduce(jsquest.combvec)
 
-        // default priors 引数で指定されたものにも対応する必要あり
+        // For now, only certain prior distributions are supported
         const priors = []
         PF_params.forEach(param => {
             const unit_vector = numeric.linspace(1, 1, param.length) // numeric.rep?
@@ -39,35 +37,16 @@ class jsquest {
         this.normalized_priors = numeric.div(mulitiplied_priors, numeric.sum(mulitiplied_priors))
         this.normalized_posteriors = this.normalized_priors
 
-        this.responses = responses
-        // this.stopRule = stopRule.toLowerCase()
-        
-        this.stopCriterion = stopCriterion
-        this.minNTrials = minNTrials
-        this.maxNTrials = maxNTrials
-
-        if (stopRule === "ntrials"){
-            if (typeof minNTrials !== 'undefined' && minNTrials !== stopCriterion ) {
-                alert('When stopRule is specified as ntrials, minNTrials and stopCriterion must be the same.')
-            } else if (typeof maxNTrials !== 'undefined' && maxNTrials !== stopCriterion ) {
-                alert('When stopRule is specified as ntrials, maxNTrials and stopCriterion must be the same.')
-            }
-        }
-    
-        // 引数が適切かどうかの確認
-
-
+        this.responses = numeric.linspace(0, PF.length-1, PF.length)
                 
-        // Precompute outcome proportions
-        // ここで呼び出すならば、事前分布を指定したいときの処理も考えなければならない
-        
+        // Precompute outcome proportions (likelihoods)
         // response x stimulus (row) x PF parameters (column)
         const precomputed_outcome_proportions = []
         this.PF.forEach(func => {
             const likelihoods_stimulus_domain = []
             this.comb_stim_params.forEach(stim => {
                 const probabilities = []
-                this.comb_PF_params.forEach(param => { // parameters of PF
+                this.comb_PF_params.forEach(param => { // PF parameters
                     const tmp_arguments = Array.isArray(stim) ? stim.concat(param) : [stim].concat(param)
                     probabilities.push(func(...tmp_arguments))
                 })
@@ -77,11 +56,13 @@ class jsquest {
         })
         this.precomputed_outcome_proportions = precomputed_outcome_proportions
 
+        this.expected_entropies_by_stim = jsquest.update_entropy_by_stim(this) // The initial entropies
     }
 
+    // Same as the getParamEsts()
     getEstimates(thresholdingRule = 'mode', roundStimuliToDomain = true){
         switch (thresholdingRule){
-            case 'mean':
+            case 'mean': 
                 const params = numeric.transpose(this.comb_PF_params)
                 const estimates_mean = []
                 const deviation = []
@@ -104,16 +85,24 @@ class jsquest {
                 } else {
                     return estimates_mean
                 }
-            case 'median':
-                const cumsum_array = jsquest.cumsum(this.normalized_posteriors)
-                const abs_array = numeric.abs(numeric.sub(cumsum_array, 0.5))
-                const idx_median = jsquest.find_min_index(abs_array)
-                return this.comb_PF_params[idx_median]
+            // case 'median':
+                // Pending
+                // The following code is a faithful reproduction of the Matlab code.
+                // However, I'm skeptical about this calculation
+                // because the method seems to depend on the order of the data in normalized_posteriors.
+                // I am not sure if the value obtained by this calculation is the median.
+                //
+                // See https://github.com/petejonze/QuestPlus/issues/2
+                // 
+                // const cumsum_array = jsquest.cumsum(this.normalized_posteriors)
+                // const abs_array = numeric.abs(numeric.sub(cumsum_array, 0.5))
+                // const idx_median = jsquest.find_min_index(abs_array)
+                // return this.comb_PF_params[idx_median]
             case 'mode':
                 const idx_mode = jsquest.find_max_index(this.normalized_posteriors)
                 return this.comb_PF_params[idx_mode]
             default:
-                alert(`The argument of the getEstimates must be one of : "mean" | "median" | "mode".`)
+                alert(`The argument of the getEstimates must be "mean" or "mode".`)
         }
     }
 
@@ -121,15 +110,40 @@ class jsquest {
     
     getStimParams(){
         // Compute the product of likelihood and current posterior array
-        // likelihoodsは3つの入れ子配列。1番目が反応、2番目が刺激、3番目がpfのパラメーター
+        // Structure of likelihoods: response x stimulus (row) x PF parameters (column)
 
-        const EH_array = numeric.rep([this.comb_stim_params.length], 0)
-        this.precomputed_outcome_proportions.forEach(proportions_at_stim_params => { // For each response
+        const index = jsquest.find_min_index(this.expected_entropies_by_stim)
+        let stim = this.comb_stim_params[index]
+        return stim
+    }
+
+    update(stim, resp){
+        const stimIdx = this.comb_stim_params.indexOf(stim)
+
+        if (!this.hasOwnProperty('stim_list')){
+            this.stim_list = [stim]
+            this.resp_list = [resp]
+            this.stim_index_list = [stimIdx]
+        } else {
+            this.stim_list.push(stim)
+            this.resp_list.push(resp)
+            this.stim_index_list.push(stimIdx)
+        }
+        const new_posterior = numeric.mul(this.normalized_posteriors, this.precomputed_outcome_proportions[resp][stimIdx])
+        const s = numeric.sum(new_posterior)
+        this.normalized_posteriors = numeric.div(new_posterior, s)
+        this.expected_entropies_by_stim = jsquest.update_entropy_by_stim(this)
+    }
+
+    static update_entropy_by_stim(data){
+        const EH_array = numeric.rep([data.comb_stim_params.length], 0)
+        data.precomputed_outcome_proportions.forEach(proportions_at_stim_params => { // For each response
             proportions_at_stim_params.forEach((proportions_at_PF_params, index) => { // For each stimulus domain
-                const posterior_times_proportions = numeric.mul(this.normalized_posteriors, proportions_at_PF_params)
+                const posterior_times_proportions = numeric.mul(data.normalized_posteriors, proportions_at_PF_params)
                 const expected_outcomes = numeric.sum(posterior_times_proportions)
                 const posterior = numeric.div(posterior_times_proportions, expected_outcomes)
-                const tmp_entropy = numeric.mul(posterior, numeric.log(posterior))
+                // const tmp_entropy = numeric.mul(posterior, numeric.log(posterior)) // Note that log2 is used in qpArrayEntropy
+                const tmp_entropy = numeric.mul(posterior, jsquest.log2(posterior))
                 const H = (-1) * tmp_entropy.reduce((a,b) => a + (isNaN(b) ? 0: b), 0) // nansum function 
                 // https://stackoverflow.com/questions/50956086/javascript-equivalent-of-nansum-from-matlab
 
@@ -137,44 +151,14 @@ class jsquest {
                 EH_array[index] = EH_array[index] + expected_outcomes * H
             })
         })
-
-        const index = jsquest.find_min_index(EH_array)
-        let stim = this.comb_stim_params[index]
-        return stim
-
-        // console.log(index)
-        // console.log(this.stim_params)
-        // console.log(stim)
-
-        // ここは実際は呼ばれていない
-        // constrain selection if required (and if not on first trial) -- new method, based on actual domain-entry units
-        // 刺激の選択について、なにか制約を設ける？
-        // if (typeof(this.stimConstrainToNOfPrev) !== 'undefined' && typeof(this.history_stim) !== 'undefined'){
-        //     const prevStim = this.history_stim[this.history_stim.length - 1]
-
-        //     // prevStimは、刺激の各次元の値をひとつずつ持っている
-        //     prevStim.forEach((element, index) => {
-        //         // this.stim_params[index] = domain
-        //         const tmp1 = numeric.sub(this.stim_params[index], element)
-        //         const tmp2 = numeric.abs(tmp1)
-        //         const idx0 = jsquest.find_min_index(tmp2)
-
-        //         const targIdx = this.stim_params.indexOf(stim[index])
-
-        //         if (Math.abs(targIdx - idx0) > this.stimConstrainToNOfPrev[index]){
-        //             const idx1 = idx0 + Math.sign(targIdx - idx0) * this.stimConstrainToNOfPrev[index]
-        //             stim[index] = this.stim_params[idx1]
-        //         }
-        //     })
-        // }
-
+        return EH_array
     }
 
-    update(stim, resp){
-        const stimIdx = this.comb_stim_params.indexOf(stim)
-        const new_posterior = numeric.mul(this.normalized_posteriors, this.precomputed_outcome_proportions[resp][stimIdx])
-        const s = numeric.sum(new_posterior)
-        this.normalized_posteriors = numeric.div(new_posterior, s)
+    static log2(array){
+        const length = array.length
+        const output = []
+        for (let i = 0; i < length; i++) output.push(Math.log2(array[i]))
+        return output
     }
 
     // It is similar to the combvec function in MATLAB.

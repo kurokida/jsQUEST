@@ -52,7 +52,7 @@
         const intensity = jsqp.getStimParams()
         if (intensity[0] !== simulated_stim[i][0]) console.error(`Check the first stim parameter of trial ${i+1}. ${intensity}`)
         if (intensity[1] !== simulated_stim[i][1]) console.error(`Check the second stim parameter of trial ${i+1}. ${intensity}`)
-        console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]+1}`)
+        // console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]+1}`)
         jsqp.update(intensity, simulated_answers[i])
 
     }
@@ -70,18 +70,17 @@
     if (estimates_mode1[0] !== -32) alert('Check5')
     if (estimates_mode1[1] !== -56) alert('Check6')
     if (Math.abs(estimates_mode1[2] - 1.4) > 2.23e-16) alert('Check7')
-    // if (estimates_mode1[3] !== 0.02) alert('Check8')
 
     const estimates_mean1a = jsqp.getEstimates('mean', true)
-    // console.log(estimates_mean1a)
-    if (estimates_mean1a[1] !== -52) alert('Check9')
+    console.log(estimates_mean1a)
+    if (estimates_mean1a[1] !== -52) alert('Check8')
 
     const estimates_mean1b = jsqp.getEstimates('mean', false)
     console.log(estimates_mean1b)
-    if (estimates_mean1b[2] - 1.3177 > 6.1e-6) alert('Check10')
+    if (Math.abs(estimates_mean1b[2] - 1.3177) > 6.1e-6) alert('Check9')
 
-    const estimates_median = jsqp.getEstimates('median')
-    console.log(estimates_median)
+    // const estimates_median = jsqp.getEstimates('median')
+    // console.log(estimates_median)
     //   Matlab retruns -38, -56, 1.4
     //   jsQUEST returns -32, -56, 1.4
 
