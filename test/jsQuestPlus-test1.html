@@ -82,6 +82,8 @@
     // const estimates_median = jsqp.getEstimates('median')
     // if (estimates_median[0] !== -21) alert('Check11')
 
+    const sd = jsqp.getSDs()
+    if (Math.abs(sd[0] - 1.389) > 3.4e-4) alert('Check13')
 
 </script>
 </html>
