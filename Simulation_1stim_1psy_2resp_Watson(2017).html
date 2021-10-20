@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="./numeric.js"></script>
+        <script src="src/jsQuestPlus.js"></script>
+    </head>
+<body>
+    <p>This program simulates the example for estimation of contrast threshold {1, 1, 2} in <a href="https://doi.org/10.1167/17.3.10">Watson (2017)</a>.</p>
+    <p>Watson (2017) wrote that:</p>
+    <blockquote>
+        <p>The first is a very simple case in which there is a single stimulus dimension (contrast), and only a single psychometric parameter (threshold). This is the case for which the original QUEST was designed.</p>
+    </blockquote>
+    <p>Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console.</p>
+</body>
+<script>
+    // Example: 1 stimulus parameter x 1 PF parameter x 2 responses
+    
+    // Psychometric function corresponding to the first response (response = 0)
+    // You can specify the function or use the weibull/normcdf function jsQuest provides.
+    function func_resp0(stim, threshold, slope, guess, lapse) {
+        // const tmp = slope * (stim - threshold)/20
+        // return lapse - (guess + lapse -1)*Math.exp(-Math.pow(10, tmp))
+
+        return jsquest.weibull(stim, threshold, slope, guess, lapse) 
+    }
+
+    // Psychometric function corresponding to the second response (response = 1).
+    function func_resp1(stim, threshold, slope, guess, lapse) {
+        return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
+    }
+
+    const true_slope = 3.5
+    const true_guess = 0.5
+    const true_lapse = 0.02
+
+    let stim_domain = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
+    let threshold_domain = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
+    let slope_domain = [true_slope] // Don't forget to add brackets, i.e., specify as an array.
+    let guess_domain = [true_guess]
+    let lapse_domain = [true_lapse]
+
+    // jsqp means jsQuestPlus. You can use any variable name you like.
+    const jsqp = new jsquest(
+        [func_resp0, func_resp1], [stim_domain], [threshold_domain, slope_domain, guess_domain, lapse_domain])
+
+    console.log(jsqp)
+
+    // Note that the response is binominal.
+    function simulate_observer(contrast){
+        const true_threshold = -20
+
+        if (Math.random() > func_resp0(contrast, true_threshold, true_slope, true_guess, true_lapse)){
+            return 1 // yes
+        } else {
+            return 0 // no
+        }
+    }
+
+    const nTrials = 32 // This is identical to that of Watson (2017)
+    for (let i = 0; i < nTrials; i++){
+        const contrast = jsqp.getStimParams()
+        const resp = simulate_observer(contrast) 
+        console.log(`Trial ${i+1}: Contrast = ${contrast}; Response = ${resp}`)
+        jsqp.update(contrast, resp)
+    }
+
+    const estimates = jsqp.getEstimates()
+    console.log(estimates)
+
+    console.log(`Watson (2017) wrote the true threshold as -20.`)
+    console.log(`jsQuestPlus estimates as ${estimates[0]}.`)
+</script>
+</html>
