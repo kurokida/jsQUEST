@@ -22,7 +22,7 @@
     // Example: 2 stimulus parameters x 3 PF parameters x 2 responses
     
     // Psychometric function corresponding to the first response (response = 0)
-    // You can specify the function or use the weibull function jsQuest provides.
+    // You can specify the function or use the weibull/normcdf function jsQuest provides.
     function func_resp0(freq, contrast, threshold, c0, cf){
         const max = Math.max(threshold, c0 + cf*freq)
         return jsquest.weibull(contrast, max, 3, 0.5, 0.01)
@@ -33,11 +33,11 @@
         return 1 - func_resp0(freq, contrast, threshold, c0, cf) 
     }
 
-    const spatial_frequency = jsquest.getArray_with_fix_interval(0, 2, 40)
-    const contrast = jsquest.getArray_with_fix_interval(-50, 2, 0)
-    const threshold = jsquest.getArray_with_fix_interval(-50, 2, -30)
-    const c0 = jsquest.getArray_with_fix_interval(-60, 2, -40)
-    const cf = jsquest.getArray_with_fix_interval(0.8, 0.2, 1.6)
+    const spatial_frequency = jsquest.getArray_with_fix_interval(0, 2, 40) // [0, 2, 4, ..., 38, 40]
+    const contrast = jsquest.getArray_with_fix_interval(-50, 2, 0) // [-50, -48, -46, ..., -2, 0]
+    const threshold = jsquest.getArray_with_fix_interval(-50, 2, -30) // [-50, -48, -46, ..., -32, -30]
+    const c0 = jsquest.getArray_with_fix_interval(-60, 2, -40) // [-60, -58, -56, ..., -42, -40]
+    const cf = jsquest.getArray_with_fix_interval(0.8, 0.2, 1.6) // [0.8, 1, 1.2, 1.4, 1.6]
 
     // These values are written in Watson (2017)
     // Note that, in Watson (2017), the first answer corresponds to 1 and the second answer to 2.
@@ -52,16 +52,18 @@
 
     console.log(simulated_answers.length)
     for (let i = 0; i < simulated_answers.length; i++){
-        const intensity = jsqp.getStimParams()
+        const stim = jsqp.getStimParams()
+        const resp = simulated_answers[i]
 
         // Spatial frequency
-        if (intensity[0] !== simulated_stim[i][0]) console.error(`Check the first stim parameter of trial ${i+1}. ${intensity}`)
+        if (stim[0] !== simulated_stim[i][0]) console.error(`Check the first stim parameter of trial ${i+1}. ${stim}`)
         
         // Contrast
-        if (intensity[1] !== simulated_stim[i][1]) console.error(`Check the second stim parameter of trial ${i+1}. ${intensity}`)
+        if (stim[1] !== simulated_stim[i][1]) console.error(`Check the second stim parameter of trial ${i+1}. ${stim}`)
         
-        console.log(`Trial ${i+1}: Intensity = ${intensity}; Response = ${simulated_answers[i]+1}`)
-        jsqp.update(intensity, simulated_answers[i])
+        console.log(`Trial ${i+1}: Spatial frequency = ${stim[0]}; Contrast = ${stim[1]}; Response = ${resp}`)
+        
+        jsqp.update(stim, resp)
     }
 
     const estimates = jsqp.getEstimates()
