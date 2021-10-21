@@ -63,6 +63,31 @@ class jsquest {
         this.expected_entropies_by_stim = jsquest.update_entropy_by_stim(this) // The initial entropies
     }
 
+    // This is similar to the QuestSd function
+    // http://psychtoolbox.org/docs/QuestSd 
+    getSDs(){
+        const params = numeric.transpose(this.comb_PF_params)
+        const sd = []
+        params.forEach(data => {
+            const tmp = numeric.mul(data, this.normalized_posteriors)
+            const mean = numeric.sum(tmp)
+
+            // p=sum(q.pdf);
+            // sd=sqrt(sum(q.pdf.*q.x.^2)/p-(sum(q.pdf.*q.x)/p).^2);
+            const p = numeric.sum(this.normalized_posteriors) // This will be 1 as long the normalized posteriors are used.
+            const tmp1 = numeric.pow(data, 2)
+            const tmp2 = numeric.mul(this.normalized_posteriors, tmp1)
+            const tmp3 = numeric.div(numeric.sum(tmp2), p)
+            const tmp4 = numeric.div(mean, p)
+            const tmp5 = numeric.pow(tmp4, [2])
+            const tmp6 = numeric.sqrt(numeric.sub(tmp3, tmp5)) // tmp6 is an array containing only one element
+            // console.log(tmp6)
+            // return tmp6[0]
+            sd.push(tmp6[0])
+        })
+        return sd
+    }
+
     // Same as the getParamEsts()
     getEstimates(thresholdingRule = 'mode', roundStimuliToDomain = true){
         switch (thresholdingRule){
