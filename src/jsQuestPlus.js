@@ -10,21 +10,21 @@ console.log('jsQuestPlus Version 0.1')
 class jsquest {
     // PF menas Psychometric Functions
     constructor(PF, stim_params, PF_params){
-        this.nAlert = 0
+        this.nAlerts = 0
 
         this.PF = PF
 
         stim_params.forEach(param =>{
             if (!Array.isArray(param)) {
                 alert('The stimulus parameters must be specified as an array.')
-                this.nAlert++
+                this.nAlerts++
             }
         })        
 
         PF_params.forEach(param =>{
             if (!Array.isArray(param)) {
                 alert('The parameters of the psychometric function must be specified as an array.')
-                this.nAlert++
+                this.nAlerts++
             }
         })        
 
@@ -44,7 +44,7 @@ class jsquest {
             if (param.length === 0) {
                 alert('Divided by zero.')
                 console.error('Divided by zero.')
-                this.nAlert++
+                this.nAlerts++
             }
             priors.push(numeric.div(unit_vector, param.length))
         })
@@ -66,7 +66,7 @@ class jsquest {
         if (sum_of_priors === 0) {
             alert('Divided by zero.')
             console.error('Divided by zero.')
-            this.nAlert++
+            this.nAlerts++
         }
         this.normalized_priors = numeric.div(mulitiplied_priors, sum_of_priors)
         this.normalized_posteriors = this.normalized_priors
@@ -85,11 +85,11 @@ class jsquest {
                     const p = func(...tmp_arguments)
                     if (p < 0) {
                         alert('Psychometric function has returned negative probability for an outcome')
-                        this.nAlert++
+                        this.nAlerts++
                     }
                     if (p > 1){
                         alert('Psychometric function has returned probability that exceeds one for an outcome')
-                        this.nAlert++
+                        this.nAlerts++
                     }
                     probabilities.push(p)
                 })
@@ -117,7 +117,7 @@ class jsquest {
             if (p === 0) {
                 alert('Divided by zero.')
                 console.error('Divided by zero.')
-                this.nAlert++
+                this.nAlerts++
             }
             const tmp1 = numeric.pow(data, 2)
             const tmp2 = numeric.mul(this.normalized_posteriors, tmp1)
@@ -209,7 +209,7 @@ class jsquest {
         if (s === 0) {
             alert('Divided by zero.')
             console.error('Divided by zero.')
-            this.nAlert++
+            this.nAlerts++
         }
         this.normalized_posteriors = numeric.div(new_posterior, s)
         this.expected_entropies_by_stim = jsquest.update_entropy_by_stim(this)
@@ -224,7 +224,7 @@ class jsquest {
                 if (expected_outcomes === 0) {
                     alert('Divided by zero.')
                     console.error('Divided by zero.')
-                    this.nAlert++
+                    this.nAlerts++
                 }
                 const posterior = numeric.div(posterior_times_proportions, expected_outcomes)
                 // const tmp_entropy = numeric.mul(posterior, numeric.log(posterior)) // Note that log2 is used in qpArrayEntropy
