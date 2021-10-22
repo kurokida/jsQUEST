@@ -10,7 +10,24 @@ console.log('jsQuestPlus Version 0.1')
 class jsquest {
     // PF menas Psychometric Functions
     constructor(PF, stim_params, PF_params){
+        this.nAlert = 0
+
         this.PF = PF
+
+        stim_params.forEach(param =>{
+            if (!Array.isArray(param)) {
+                alert('The stimulus parameters must be specified as an array.')
+                this.nAlert++
+            }
+        })        
+
+        PF_params.forEach(param =>{
+            if (!Array.isArray(param)) {
+                alert('The parameters of the psychometric function must be specified as an array.')
+                this.nAlert++
+            }
+        })        
+
         this.stim_params = stim_params
         this.PF_params = PF_params
 
@@ -18,11 +35,17 @@ class jsquest {
         // https://jp.mathworks.com/help/deeplearning/ref/combvec.html?lang=en
         this.comb_stim_params = stim_params.reduce(jsquest.combvec) // comb means combined; vec means vectors.
         this.comb_PF_params = PF_params.reduce(jsquest.combvec)
+        
 
         // For now, only certain prior distributions are supported
         const priors = []
         PF_params.forEach(param => {
             const unit_vector = numeric.linspace(1, 1, param.length) // numeric.rep?
+            if (param.length === 0) {
+                alert('Divided by zero.')
+                console.error('Divided by zero.')
+                this.nAlert++
+            }
             priors.push(numeric.div(unit_vector, param.length))
         })
         this.priors = priors
@@ -38,7 +61,14 @@ class jsquest {
         }
 
         this.comb_priors = comb_priors
-        this.normalized_priors = numeric.div(mulitiplied_priors, numeric.sum(mulitiplied_priors))
+
+        const sum_of_priors = numeric.sum(mulitiplied_priors)
+        if (sum_of_priors === 0) {
+            alert('Divided by zero.')
+            console.error('Divided by zero.')
+            this.nAlert++
+        }
+        this.normalized_priors = numeric.div(mulitiplied_priors, sum_of_priors)
         this.normalized_posteriors = this.normalized_priors
 
         this.responses = numeric.linspace(0, PF.length-1, PF.length)
@@ -52,7 +82,16 @@ class jsquest {
                 const probabilities = []
                 this.comb_PF_params.forEach(param => { // PF parameters
                     const tmp_arguments = Array.isArray(stim) ? stim.concat(param) : [stim].concat(param)
-                    probabilities.push(func(...tmp_arguments))
+                    const p = func(...tmp_arguments)
+                    if (p < 0) {
+                        alert('Psychometric function has returned negative probability for an outcome')
+                        this.nAlert++
+                    }
+                    if (p > 1){
+                        alert('Psychometric function has returned probability that exceeds one for an outcome')
+                        this.nAlert++
+                    }
+                    probabilities.push(p)
                 })
                 likelihoods_stimulus_domain.push(probabilities)
             })
@@ -75,6 +114,11 @@ class jsquest {
             // p=sum(q.pdf);
             // sd=sqrt(sum(q.pdf.*q.x.^2)/p-(sum(q.pdf.*q.x)/p).^2);
             const p = numeric.sum(this.normalized_posteriors) // This will be 1 as long the normalized posteriors are used.
+            if (p === 0) {
+                alert('Divided by zero.')
+                console.error('Divided by zero.')
+                this.nAlert++
+            }
             const tmp1 = numeric.pow(data, 2)
             const tmp2 = numeric.mul(this.normalized_posteriors, tmp1)
             const tmp3 = numeric.div(numeric.sum(tmp2), p)
@@ -162,6 +206,11 @@ class jsquest {
         }
         const new_posterior = numeric.mul(this.normalized_posteriors, this.precomputed_outcome_proportions[resp][stimIdx])
         const s = numeric.sum(new_posterior)
+        if (s === 0) {
+            alert('Divided by zero.')
+            console.error('Divided by zero.')
+            this.nAlert++
+        }
         this.normalized_posteriors = numeric.div(new_posterior, s)
         this.expected_entropies_by_stim = jsquest.update_entropy_by_stim(this)
     }
@@ -172,6 +221,11 @@ class jsquest {
             proportions_at_stim_params.forEach((proportions_at_PF_params, index) => { // For each stimulus domain
                 const posterior_times_proportions = numeric.mul(data.normalized_posteriors, proportions_at_PF_params)
                 const expected_outcomes = numeric.sum(posterior_times_proportions)
+                if (expected_outcomes === 0) {
+                    alert('Divided by zero.')
+                    console.error('Divided by zero.')
+                    this.nAlert++
+                }
                 const posterior = numeric.div(posterior_times_proportions, expected_outcomes)
                 // const tmp_entropy = numeric.mul(posterior, numeric.log(posterior)) // Note that log2 is used in qpArrayEntropy
                 const tmp_entropy = numeric.mul(posterior, jsquest.log2(posterior))
