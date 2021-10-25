@@ -33,15 +33,15 @@
     const true_guess = 0.5
     const true_lapse = 0.02
 
-    let stim_domain = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
-    let threshold_domain = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
-    let slope_domain = [true_slope] // Don't forget to add brackets, i.e., specify as an array.
-    let guess_domain = [true_guess]
-    let lapse_domain = [true_lapse]
+    const contrast_samples = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
+    const threshold_samples = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
+    const slope = [true_slope] // Don't forget to add brackets, i.e., specify as an array.
+    const guess = [true_guess]
+    const lapse = [true_lapse]
 
     // jsqp means jsQuestPlus. You can use any variable name you like.
     const jsqp = new jsquest(
-        [func_resp0, func_resp1], [stim_domain], [threshold_domain, slope_domain, guess_domain, lapse_domain])
+        [func_resp0, func_resp1], [contrast_samples], [threshold_samples, slope, guess, lapse])
 
     console.log(jsqp)
 

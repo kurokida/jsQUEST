@@ -29,11 +29,11 @@
         return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
     }
 
-    let stim_domain = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
-    let threshold_domain = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
-    let slope_domain = [3.5] // Don't forget to add brackets, i.e., specify as an array.
-    let guess_domain = [0.5]
-    let lapse_domain = [0.02]
+    const contrast_samples = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
+    const threshold_samples = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
+    const slope = [3.5] // Don't forget to add brackets, i.e., specify as an array.
+    const guess = [0.5]
+    const lapse = [0.02]
 
     // These values are written in Watson (2017)
     // Note that, in Watson (2017), the first answer corresponds to 1 and the second answer to 2.
@@ -42,7 +42,7 @@
 
     // jsqp means jsQuestPlus. You can use any variable name you like.
     const jsqp = new jsquest(
-        [func_resp0, func_resp1], [stim_domain], [threshold_domain, slope_domain, guess_domain, lapse_domain])
+        [func_resp0, func_resp1], [contrast_samples], [threshold_samples, slope, guess, lapse])
 
     console.log(jsqp)
 
