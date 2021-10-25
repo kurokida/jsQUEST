@@ -1,0 +1,13 @@
+# Simulation programs
+All the files used in the simulation are contained in Simulation programs. 
+There is one MATLAB file, and the rest of the files are for jsQUEST.
+
+# The analysis was done using the following three files
+- analysis2.R
+- jsQuest_20210819.csv
+- originalQuest_20210819.csv
+
+The jsQuest_20210819.csv was created from the jsQuest_raw_data.csv filtered by the trial_index = 40.
+The originalQuest_20210819.csv was created by merging files the QUEST_simulate_Quantile.csv, the QUEST_simulate_Mean.csv, and the QUEST_simulate_Mode.csv in the MATLAB-based QUEST raw data.
+
+Each time is the average of the 40 trials. We did not record the time of each trial.

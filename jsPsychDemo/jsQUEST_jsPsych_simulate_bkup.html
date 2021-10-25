@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8">  
+    <script src="./jspsych.js"></script>
+    <script src="./jspsych-html-button-response.js"></script>
+    <script src="./jspsych-html-keyboard-response.js"></script>
+    <script src="./jspsych-survey-text.js"></script>
+    <script src="./jsQUEST.js"></script>
+    <script src="./platform.js"></script>
+    <link rel="stylesheet" href="./jspsych.css">
+    <style>
+        .jspsych-display-element {
+            display: inline;
+        }
+        div.instruction {
+            width: 600px;
+            text-align: left;
+        }
+    </style>
+
+  </head>
+  <body></body>
+  <script>
+    let quest_quantile, quest_mean, quest_mode
+    let trial_num = 1
+
+    const tActual = -2
+    const trialsDesired = 40
+    const tGuess = -1
+    const tGuessSd = 2
+    const pThreshold = 0.82
+    const beta = 3.5
+    const delta = 0.01
+    const gamma = 0.5
+
+    let total_time_quantile = 0
+    let total_time_mean = 0
+    let total_time_mode = 0
+    let base_time
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+    // quest_quantile:  The stimulus intensity is determined by the QuestQuantile function.
+    // quest_mean:      The stimulus intensity is determined by the QuestMean function.
+    // quest_mode:      The stimulus intensity is determined by the QuestMode function.
+    
+    base_time = performance.now();
+    quest_quantile = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    const create_time = performance.now() - base_time
+    quest_quantile.normalizePdf = 1
+
+    quest_mean = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    quest_mean.normalizePdf = 1
+
+    quest_mode = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+    quest_mode.normalizePdf = 1
+
+    const instruction = {
+        type: 'html-button-response',
+        stimulus: `<div class="instruction"><p>この度、私（黒木）は心理物理学のオンライン実験において閾値を測定するためのツール（jsQUEST）を開発しました。</p>
+            <p>本調査は、みなさんのパソコンで問題なくjsQUESTが機能するかを確認するためのものです。</p>
+            <p>みなさんのほうで何かを回答していただく必要はありませんが、みなさんが現在お使いの機種、OS（WindowsやMacなど）、ウェブブラウザ（Edge, Safari, Chromeなど）の情報を記録させていただきます。</p>
+            <p>個人が特定されるような情報を取得することはなく、例えば「WindowsのChromeで、jsQUESTが何秒で動作した」というような情報が記録されます。また記録した情報を集計して論文等で発表する予定です。</p>
+            <p>何かがインストールされるということもありません。</p>
+            <p>調査への協力に同意をいただける場合には「次へ」のボタンを押してください。</p></div>`,
+        choices: ['次へ'],
+    }
+
+    const trial = {
+        type: 'html-keyboard-response',
+        stimulus: function(){
+            const progress = Math.round(trial_num/trialsDesired * 100)
+            return `<p>調査中です。30秒ほどで終わります。</p><p>画面が自動的に切り替わりますので、このままお待ちください。</p>
+                <p>調査の${progress}%が完了しました。</p>`},
+        // stimulus: '<p>調査中です。30秒ほどで終わります。</p><p>画面が自動的に切り替わりますので、このままお待ちください。',
+        choices: ['jsPsych.NO_KEYS'],
+        data: {a:0}, // dummy
+        trial_duration: 500,
+        on_start(trial){
+            let tTest, response
+            const order = jsPsych.randomization.shuffle([0, 1, 2]) // To simulate in a random order
+            
+            order.forEach(element => {
+                if (element === 0){
+                    //////////////////////////////////////////////
+                    // QUANTILE
+                    base_time = performance.now();
+                    tTest = jsQUEST.QuestQuantile(quest_quantile); // Intensity
+                    total_time_quantile = total_time_quantile + performance.now() - base_time
+
+                    response = jsQUEST.QuestSimulate(quest_quantile, tTest, tActual);
+
+                    // % Update the pdf
+                    base_time = performance.now();
+                    quest_quantile = jsQUEST.QuestUpdate(quest_quantile, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+                    total_time_quantile = total_time_quantile + performance.now() - base_time
+
+                    trial.data['quantile_tTest'] = tTest
+                    trial.data['quantile_response'] = response
+                    trial.data['quantile_mean'] = jsQUEST.QuestMean(quest_quantile);
+                    trial.data['quantile_sd'] = jsQUEST.QuestSd(quest_quantile);
+                } else if (element === 1){
+
+                    //////////////////////////////////////////////
+                    // MEAN
+                    base_time = performance.now();
+                    tTest = jsQUEST.QuestMean(quest_mean); // Intensity
+                    total_time_mean = total_time_mean + performance.now() - base_time
+
+                    response = jsQUEST.QuestSimulate(quest_mean, tTest, tActual);
+
+                    // % Update the pdf
+                    base_time = performance.now();
+                    quest_mean = jsQUEST.QuestUpdate(quest_mean, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+                    total_time_mean = total_time_mean + performance.now() - base_time
+
+                    trial.data['mean_tTest'] = tTest
+                    trial.data['mean_response'] = response
+                    trial.data['mean_mean'] = jsQUEST.QuestMean(quest_mean);
+                    trial.data['mean_sd'] = jsQUEST.QuestSd(quest_mean);
+                } else {
+
+                    //////////////////////////////////////////////
+                    // MODE
+                    base_time = performance.now();
+                    tTest = jsQUEST.QuestMode(quest_mode).mode; // Intensity
+                    total_time_mode = total_time_mode + performance.now() - base_time
+
+                    response = jsQUEST.QuestSimulate(quest_mode, tTest, tActual);
+
+                    // % Update the pdf
+                    base_time = performance.now();
+                    quest_mode = jsQUEST.QuestUpdate(quest_mode, tTest, response); // % Add the new datum (actual test intensity and observer response) to the database.
+                    total_time_mode = total_time_mode + performance.now() - base_time
+
+                    trial.data['mode_tTest'] = tTest
+                    trial.data['mode_response'] = response
+                    trial.data['mode_mean'] = jsQUEST.QuestMean(quest_mode);
+                    trial.data['mode_sd'] = jsQUEST.QuestSd(quest_mode);
+                }
+
+                
+            })
+            console.log(trial_num)
+        }
+    }
+
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            if (trial_num < trialsDesired){
+                trial_num++
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    const briefing = {
+        type: 'html-button-response',
+        stimulus: `<div class="instruction"><p>調査は終了しました。ご協力いただき本当にありがとうございました。</p>
+            <p>ウィンドウを閉じていただいて大丈夫です。</p>
+            <p>もしjsQUESTに関心のあるかたは、<a href="https://kurokida.github.io/jsQUEST/">こちら</a>をご覧ください。</p>
+            </div>`,
+        on_start: function(trial){
+            const myrandID = jsPsych.randomization.randomID(8);
+    
+            jsPsych.data.addProperties({
+                date: getDateStr(),
+                ID: myrandID,
+                appName: navigator.appName,
+                vendor: navigator.vendor,
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                platform_name: platform.name,
+                platform_version: platform.version,
+                platform_layout: platform.layout,
+                architecture: platform.os.architecture,
+                family: platform.os.family,
+                os_version: platform.os.version,
+                os: platform.os.toString(),
+                description: platform.description,
+                product: platform.product,
+                create_time: create_time,
+                time_quantile: total_time_quantile / trialsDesired,
+                time_mean: total_time_mean / trialsDesired,
+                time_mode: total_time_mode / trialsDesired,
+            })
+
+            saveData()
+            
+            // let output_data = jsPsych.data.get().ignore('stimulus');
+            // output_data = output_data.ignore('a');
+            // output_data.localSave('csv', myrandID + '.csv');
+        },
+        choices: ['Finish']
+    }
+
+    function saveData() {
+        var xhr = new XMLHttpRequest();
+        // xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
+        xhr.open('POST', 'write_data.php', false); // Need to specify false to save data with iPhone or iPad
+        // https://github.com/jspsych/jsPsych/issues/1999#issuecomment-883748620
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            if(xhr.status == 200){
+                var response = JSON.parse(xhr.responseText);
+                console.log(response.success);
+            }
+        };
+        xhr.onerror = function(){
+            alert('Err')
+            alert(`Error ${xhr.status}: ${xhr.statusText}: ${xhr.responseXML}`); 
+        }
+        xhr.send(jsPsych.data.get().json());
+    }
+
+    jsPsych.init({
+        timeline: [instruction, loop_node, briefing],
+        on_finish: function(){
+            // jsPsych.data.displayData(); 
+        },
+    });
+
+    function getDateStr(){
+        const now = new Date();
+        const year = now.getFullYear();
+        let month = now.getMonth() + 1; // 月
+        let day = now.getDate(); // 日
+        let hour = now.getHours(); // 時
+        let minute = now.getMinutes(); // 分
+        let sec = now.getSeconds(); // 秒
+        // 数値が1桁の場合、頭に0を付けて2桁で表示する指定
+        if(month < 10) { month = "0" + month; }
+        if(day < 10) { day = "0" + day; }
+        if(hour < 10) { hour = "0" + hour; }
+        if(minute < 10) { minute = "0" + minute; }
+        if(sec < 10) { sec = "0" + sec; }
+
+        return year + '-' + month + '-' + day + '-' + hour + ':' + minute + ':' + sec;
+    }
+  </script>
+</html>

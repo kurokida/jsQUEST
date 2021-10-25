@@ -174,7 +174,7 @@ tGuessSd = 2;
 pThreshold=0.82;
 beta=3.5;delta=0.01;gamma=0.5;
 
-method = 3; % 1=QuestQuantile, 2=QuestMean, 3=QuestMode
+method = 1; % 1=QuestQuantile, 2=QuestMean, 3=QuestMode
 
 if method == 1
     Fid = fopen('QUEST_simulate_Quantile_per_trial.csv', 'wt');
