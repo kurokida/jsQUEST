@@ -3,6 +3,7 @@
 //  https://github.com/BrainardLab/mQUESTPlus
 // Kudos to the developers!
 // 
+import numeric from 'numeric_es6';
 /* global numeric */
 
 console.log('jsQuestPlus Version 0.1')
@@ -359,3 +360,5 @@ class jsquest {
     // end    
 
 }
+
+export default jsquest;
