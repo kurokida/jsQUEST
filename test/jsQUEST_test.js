@@ -13,15 +13,19 @@ const range = 80;
 const responses = [1, 1, 0, 0, 1, 1, 0, 0, 1, 1]
 
 let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma, grain, range);
-let tTest, response;
+let tTest;
 for (let k = 0; k < responses.length; k++){
     tTest = jsQUEST.QuestQuantile(q);
     q = jsQUEST.QuestUpdate(q, tTest, responses[k]);
 }
 
 // % Ask Quest for the final estimate of threshold.
-const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
+const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994).
 const mySD = jsQUEST.QuestSd(q);
-console.log(`Final threshold estimate (mean+-sd) is ${myMean} +- ${mySD}`)
+console.log(` `)
+console.log(`The results of jsQUEST, MATLAB, and PsychoPy should be almost equal.`)
+console.log(`jsQUEST: Final threshold estimate (mean+-sd) is ${myMean} +- ${mySD}`)
+console.log(`MATLAB: Final threshold estimate (mean+-sd) is 79.073768 +- 4.173877`)
+console.log(`PsychoPy: Final threshold estimate (mean+-sd) is 79.33662751283129 +- 4.233607966057011`)
 
-// See. https://gitlab.pavlovia.org/tpronk/demo_jsquest/#testing-jsquest-against-psychopy
+// See. https://gitlab.pavlovia.org/tpronk/demo_jsquest/#testing-jsquest-against-psychopy and test/matlab_sample.m

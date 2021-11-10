@@ -15,7 +15,7 @@ let q = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
 let tTest, response;
 for (let k = 0; k < trialsDesired; k++){
     // % Get recommended level.  Choose your favorite algorithm.
-    tTest = jsQUEST.QuestQuantile(q); // % Recommended by Pelli (1987), and still our favorite.
+    tTest = jsQUEST.QuestQuantile(q); // % Recommended by Pelli (1987)
     // tTest=QuestMean(q);  // % Recommended by King-Smith et al. (1994)
     // tTest=QuestMode(q).mode;  // % Recommended by Watson & Pelli (1983)
 
@@ -31,23 +31,35 @@ for (let k = 0; k < trialsDesired; k++){
 }
 
 // % Ask Quest for the final estimate of threshold.
-const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
+const myMean = jsQUEST.QuestMean(q); // % Recommended by Pelli (1989) and King-Smith et al. (1994).
 const mySD = jsQUEST.QuestSd(q);
-console.log(`Final threshold estimate (mean+-sd) is ${myMean} +- ${mySD}`)
+console.log(` `)
+console.log(`The true threshold has been set to ${tActual}`)
+console.log(`jsQuest estimates the final threshold (mean+-sd) as ${myMean} +- ${mySD}`)
 
-// Testing other functions.
+console.log(` `)
+console.log(`Testing other functions...`)
 const mode_data = jsQUEST.QuestMode(q)
 console.log(`MODE: ${mode_data.mode}; PDF: ${mode_data.pdf}`)
-
+console.log(` `)
+console.log(`Return sorted list of intensities and response frequencies.`)
+console.log(`See http://psychtoolbox.org/docs/QuestTrials`)
 console.log(`QuestTrials without the bin size`);
 console.log(jsQUEST.QuestTrials(q))
-console.log(`QuestTrials with the bin size`);
 
+console.log(` `)
+console.log(`QuestTrials with the bin size`);
 const trials_data = jsQUEST.QuestTrials(q,0.1)
 console.log(trials_data)
 
+console.log(` `)
+console.log(`The QuestP function returns the probability of a correct (or yes) response at intensity x, assuming threshold is at x=0.`)
+console.log(`See http://psychtoolbox.org/docs/QuestP`)
 trials_data.intensity.forEach(element => {
     console.log(`The probability is ${jsQUEST.QuestP(q, element - tActual)} at the intensity of ${element}.`)
 })
 
+console.log(` `)
+console.log(`QuestBetaAnalysis`)
+console.log(`See http://psychtoolbox.org/docs/QuestBetaAnalysis`)
 jsQUEST.QuestBetaAnalysis(q)
