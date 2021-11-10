@@ -62,7 +62,7 @@ To package jsQUEST and it's dependencies, and export those as UMD bundle, run th
 
 ## Demos and Tests
 ### Demo
-This script reproduces [jsQuest's demo](https://github.com/kurokida/jsQUEST/blob/main/jsQuestDemo.html), but without the graph.
+This script reproduces [jsQuest's demo](https://github.com/kurokida/jsQUEST/blob/main/jsPsychDemo/jsQUEST_jsPsychDemo.html), but without the graph.
 
 `node test/jsQUEST_demo.js`
 
