@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="./jspsych.js"></script>
+    <script src="./jspsych-html-button-response.js"></script>
+    <script src="../dist/jsQuestPlus.js"></script>
+    <script src="../numeric.js"></script>
+    <link rel="stylesheet" href="./jspsych.css">
+  </head>
+  <body></body>
+  <script>
+    const instruction = {
+        type: 'html-button-response',
+        stimulus: `<p>This program demonstrates how to use jsQuestPlus for 
+            <a href="https://jov.arvojournals.org/article.aspx?articleid=2611972#159437865">the Watson (2017)'s second example 
+            "Estimation of contrast threshold, slope, and lapse {1, 3, 2}</a>".</p>
+            <p>See also <a href="https://github.com/kurokida/jsQUEST/tree/quest_plus">the READEME of the jsQuestPlus</a>.</p>`,
+        choices: ['START']
+    }
+
+    function func_resp0 (stim, threshold, slope, guess, lapse) {
+        const tmp = slope * (stim - threshold)/20
+        return lapse - (guess + lapse -1) * Math.exp ( -Math.pow (10, tmp))
+        // Alternatively, the weibull function provided by jsQUEST is available as follows.
+        // return jsQuestPlus.weibull (stim, threshold, slope, guess, lapse) 
+    }
+
+    function func_resp1(stim, threshold, slope, guess, lapse) {
+        return 1 - func_resp0(stim, threshold, slope, guess, lapse) 
+    }
+
+    const contrast_samples = numeric.linspace (-40, 0) // [-40, -39, -38, ..., -1, 0]
+    const threshold_samples = numeric.linspace (-40,0) // [-40, -39, -38, ..., -1, 0]
+    const slope_samples = numeric.linspace (2,5) // [2, 3, 4, 5]
+    const lapse_samples = jsQuestPlus.getArray_with_fix_interval (0, 0.01, 0.04) // [0, 0.01, 0.02, 0.03, 0.04]
+    const guess = [0.5] // The parameter of guess is assumed as a single value.
+
+    const jsqp = new jsQuestPlus ([func_resp0, func_resp1], [contrast_samples], [threshold_samples, slope_samples, guess, lapse_samples])
+
+    let trial_num = 1
+    const trialsDesired = 64
+
+    const trial = {
+        type: 'html-button-response',
+        stimulus: '',
+        choices: ['You do not need to click this button.'],
+        trial_duration: 100, // For automation
+        on_start(trial){
+            // These values are used for the simulation only and are consistent with the values described in Watson (2017).
+            const true_threshold = -20
+            const true_slope = 3
+            const true_guess = 0.5
+            const true_lapse = 0.02
+
+            const stim = jsqp.getStimParams()
+
+            // In an actual experiment, simply assign 0 or 1 depending on the response.
+            const response = jsQuestPlus.simulate_weibull_two_resp(stim, true_threshold, true_slope, true_guess, true_lapse)
+
+            jsqp.update(stim, response)
+
+            trial.stimulus = `<p>Simulation trial = ${trial_num}/${trialsDesired}</p>
+                <p>Contrast = ${stim}</p><p>The response by the simulator is ${response}</p>`
+        }
+    }
+
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            if (trial_num < trialsDesired){
+                trial_num++
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    const briefing = {
+        type: 'html-button-response',
+        stimulus: function(){
+            const estimates = jsqp.getEstimates()
+            console.log(estimates)
+            return `<p>Final threshold estimate is ${estimates[0]}.</p>
+            <p>Final slope estimate is ${estimates[1]}.</p>
+            <p>Final lapse estimate is ${estimates[3]}.</p>`
+        },
+        choices: ['Finish']
+    }
+
+    jsPsych.init({
+        timeline: [instruction, loop_node, briefing]
+    });
+
+  </script>
+</html>
