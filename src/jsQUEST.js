@@ -1,7 +1,7 @@
 import numeric from 'numeric_es6';
 import interp1 from 'interp1';
 
-console.log('jsQUEST Version 1.0.1')
+console.log('jsQUEST Version 1.1')
 
 // Copyright (c) 2021 Daiichiro Kuroki
 // Released under the MIT license
@@ -219,6 +219,7 @@ function find_less_than_or_equal_to_zero_index(my_array){
     return indices
 }
 
+// In JavaScript, indices start at zero.
 function get_array_using_index(array, indices){
     const values = []
     indices.forEach(element => {
@@ -625,17 +626,19 @@ function QuestRecompute(q, plotIt, chart_width, chart_height){
         const tmp = Math.round((inten - q.tGuess) / q.grain)
         let ii = numeric.sub(numeric.add(q.pdf.length, q.i), tmp);
         const tmp2 = ii[0]
-        if (tmp2 < 0){ // 'ii' must be greater than or equal to zero because 'ii' is the index of an array in JavaScript.
-            ii = numeric.sub(ii, tmp2) 
+        if (tmp2 < 1){
+            ii = numeric.sub(numeric.add(ii, 1), tmp2) 
         }
         const tmp3 = ii[ii.length-1]
-        const tmp4 = numeric.dim(q.s2)[1]-1
-        if (tmp3 > tmp4){ // Also, 'ii' must not be greater than the size of an array minus one.
+        const tmp4 = numeric.dim(q.s2)[1]
+        if (tmp3 > tmp4){
             ii = numeric.sub(numeric.add(ii, tmp4), tmp3)
         }
 
+        // In JavaScript, indices start at zero.
+        const ii_start_at_zero = numeric.sub(ii, 1)
         // q.pdf = numeric.mul(q.pdf, q.s2[q.response(k)+1, ii]) // 4 ms
-        q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[q.response[k]], ii))
+        q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[q.response[k]], ii_start_at_zero))
 
         if (q.normalizePdf && (k+1) % 100 === 0){
 		    q.pdf = numeric.div(q.pdf, numeric.sum(q.pdf))	// % avoid underflow; keep the pdf normalized	% 3 ms
@@ -1076,9 +1079,7 @@ function QuestUpdate(q, intensity, response){
         let ii = numeric.add(tmp, q.i)
 
         // if ii(1)<1 || ii(end)>size(q.s2,2)
-        // 'ii' must be greater than or equal to zero because 'ii' is the index of an array in JavaScript.
-        // Also, 'ii' must not be greater than the size of an array minus one. 
-        if (ii[0] < 0 || ii[ii.length-1] > numeric.dim(q.s2)[1]-1){
+        if (ii[0] < 1 || ii[ii.length-1] > numeric.dim(q.s2)[1]){
             if (q.warnPdf){
                 // low=(1-size(q.pdf,2)-q.i(1))*q.grain+q.tGuess;
                 // high=(size(q.s2,2)-size(q.pdf,2)-q.i(end))*q.grain+q.tGuess;
@@ -1097,16 +1098,19 @@ function QuestUpdate(q, intensity, response){
             // else
             // 	ii=ii+size(q.s2,2)-ii(end);
             // end
-            if (ii[0] < 0){
-                ii = numeric.sub(ii, ii[0]);
+            if (ii[0] < 1){
+                ii = numeric.sub(numeric.add(ii, 1), ii[0]);
             } else {
-                const tmp = numeric.add(ii, numeric.dim(q.s2)[1]-1)
+                const tmp = numeric.add(ii, numeric.dim(q.s2)[1])
                 ii = numeric.sub(tmp, ii[ii.length-1])
             }
         }
 
+        // In JavaScript, indices start at zero.
+        const ii_start_at_zero = numeric.sub(ii, 1)
+
         // q.pdf=q.pdf.*q.s2(response+1,ii); % 4 ms
-        q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[response], ii))
+        q.pdf = numeric.mul(q.pdf, get_array_using_index(q.s2[response], ii_start_at_zero))
         // if q.normalizePdf
         // 	q.pdf=q.pdf/sum(q.pdf);		% keep the pdf normalized	% 3 ms
         // end
