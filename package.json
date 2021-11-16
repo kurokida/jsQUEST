@@ -1,11 +1,10 @@
 {
-  "name": "jsquest",
+  "name": "jsquest_plus",
   "version": "0.1.0",
-  "description": "A fork of jsQUEST (by Daiichiro Kuroki) to aid in turning the libary into an ES6 module",
-  "main": "src/jsQUEST.js",
+  "description": "A JavaScript implementation of the QUEST+ staircase algorithm (Watson, 2017).",
+  "main": "src/jsQuestPlus.js",
   "type": "module",
   "dependencies": {
-    "interp1": "^1.0.13",
     "numeric_es6": "github:tpronk/numeric"
   },
   "devDependencies": {
@@ -17,14 +16,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tpronk/jsQUEST.git"
+  "repository": "https://github.com/kurokida/jsQUEST/tree/quest_plus",
+  "author": {
+    "name": "Daiichiro Kuroki"
   },
-  "author": "Thomas Pronk",
+  "contributors": [
+    {
+      "name": "Thomas Pronk",
+      "email": "pronkthomas@gmail.com",
+      "url": "https://thomaspronk.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tpronk/jsQUEST/issues"
+    "url": "https://github.com/kurokida/jsQUEST/issues"
   },
-  "homepage": "https://github.com/tpronk/jsQUEST#readme"
+  "homepage": "https://kurokida.github.io/jsQUEST/"
 }
