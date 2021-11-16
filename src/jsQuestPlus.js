@@ -9,7 +9,7 @@ import numeric from 'numeric_es6';
 console.log('jsQuestPlus Version 0.1')
 
 class jsquest {
-    // PF menas Psychometric Functions
+    // PF means Psychometric Functions
     constructor(PF, stim_params, PF_params){
         this.nAlerts = 0
 
@@ -361,4 +361,7 @@ class jsquest {
 
 }
 
-export default jsquest;
+export {
+    jsquest,
+    numeric
+}
