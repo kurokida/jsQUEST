@@ -240,6 +240,10 @@ class jsquest {
         return EH_array
     }
 
+    static linspace(x1, x2, n){
+        return numeric.linspace(x1, x2, n)
+    }
+
     static log2(array){
         const length = array.length
         const output = []

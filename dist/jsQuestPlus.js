@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.jsQuestPlus = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
   let numeric = {};
   numeric.version = "1.2.6";
@@ -3489,6 +3489,10 @@
           return EH_array
       }
 
+      static linspace(x1, x2, n){
+          return numeric.linspace(x1, x2, n)
+      }
+
       static log2(array){
           const length = array.length;
           const output = [];
@@ -3612,5 +3616,5 @@
 
   return jsquest;
 
-})));
+}));
 //# sourceMappingURL=jsQuestPlus.js.map
