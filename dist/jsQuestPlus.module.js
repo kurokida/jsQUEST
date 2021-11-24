@@ -3497,6 +3497,7 @@ class jsquest {
     static isNaN = numeric.isNaN
     static log = numeric.log
     static mod = numeric.mod
+    static mul = numeric.mul
     static pow = numeric.pow
     static round = numeric.round
     static sin = numeric.sin
