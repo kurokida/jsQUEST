@@ -3483,9 +3483,27 @@ class jsquest {
         return EH_array
     }
 
-    static linspace(x1, x2, n){
-        return numeric.linspace(x1, x2, n)
-    }
+    // Wrappers for the numeric.js
+    static linspace = numeric.linspace
+    static abs = numeric.abs
+    static add = numeric.add
+    static cos = numeric.cos
+    static dim = numeric.dim
+    static div = numeric.div
+    static dot = numeric.dot
+    static exp = numeric.exp
+    static floor = numeric.floor
+    static isFinite = numeric.isFinite
+    static isNaN = numeric.isNaN
+    static log = numeric.log
+    static mod = numeric.mod
+    static pow = numeric.pow
+    static round = numeric.round
+    static sin = numeric.sin
+    static sqrt = numeric.sqrt
+    static sub = numeric.sub
+    static sum = numeric.sum
+    static transpose = numeric.transpose
 
     static log2(array){
         const length = array.length;
@@ -3582,7 +3600,7 @@ class jsquest {
         }
     } 
 
-    static getArray_with_fix_interval(start, interval, end){
+    static array(start, interval, end){
         const tmp = Math.floor((end-start)/interval);
         const adjusted_end = start + interval * tmp;
         return numeric.linspace(start, adjusted_end, tmp+1)

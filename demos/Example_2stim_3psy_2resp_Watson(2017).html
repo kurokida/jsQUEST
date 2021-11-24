@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
-        <script src="./numeric.js"></script>
-        <script src="dist/jsQuestPlus.js"></script>
+        <script src="../dist/jsQuestPlus.js"></script>
     </head>
 <body>
     <p>This program simulates the example for Contrast sensitivity function {2, 3, 2} in <a href="https://doi.org/10.1167/17.3.10">Watson (2017)</a>.</p>
@@ -33,11 +31,11 @@
         return 1 - func_resp0(freq, contrast, threshold, c0, cf) 
     }
 
-    const spatial_frequency = jsQuestPlus.getArray_with_fix_interval(0, 2, 40) // [0, 2, 4, ..., 38, 40]
-    const contrast = jsQuestPlus.getArray_with_fix_interval(-50, 2, 0) // [-50, -48, -46, ..., -2, 0]
-    const threshold = jsQuestPlus.getArray_with_fix_interval(-50, 2, -30) // [-50, -48, -46, ..., -32, -30]
-    const c0 = jsQuestPlus.getArray_with_fix_interval(-60, 2, -40) // [-60, -58, -56, ..., -42, -40]
-    const cf = jsQuestPlus.getArray_with_fix_interval(0.8, 0.2, 1.6) // [0.8, 1, 1.2, 1.4, 1.6]
+    const spatial_frequency = jsQuestPlus.array(0, 2, 40) // [0, 2, 4, ..., 38, 40]
+    const contrast = jsQuestPlus.array(-50, 2, 0) // [-50, -48, -46, ..., -2, 0]
+    const threshold = jsQuestPlus.array(-50, 2, -30) // [-50, -48, -46, ..., -32, -30]
+    const c0 = jsQuestPlus.array(-60, 2, -40) // [-60, -58, -56, ..., -42, -40]
+    const cf = jsQuestPlus.array(0.8, 0.2, 1.6) // [0.8, 1, 1.2, 1.4, 1.6]
 
     // These values are written in Watson (2017)
     // Note that, in Watson (2017), the first answer corresponds to 1 and the second answer to 2.

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="./numeric.js"></script>
-        <script src="src/jsQuestPlus.js"></script>
+        <script src="../dist/jsQuestPlus.js"></script>
     </head>
 <body>
     <p>This program simulates the example for estimation of contrast threshold {1, 1, 2} in <a href="https://doi.org/10.1167/17.3.10">Watson (2017)</a>.</p>
@@ -21,7 +20,7 @@
         // const tmp = slope * (stim - threshold)/20
         // return lapse - (guess + lapse -1)*Math.exp(-Math.pow(10, tmp))
 
-        return jsquest.weibull(stim, threshold, slope, guess, lapse) 
+        return jsQuestPlus.weibull(stim, threshold, slope, guess, lapse) 
     }
 
     // Psychometric function corresponding to the second response (response = 1).
@@ -33,14 +32,14 @@
     const true_guess = 0.5
     const true_lapse = 0.02
 
-    const contrast_samples = numeric.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
-    const threshold_samples = numeric.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
+    const contrast_samples = jsQuestPlus.linspace(-40, 0) // [-40, -39, -38, ..., -1, 0]
+    const threshold_samples = jsQuestPlus.linspace(-40,0) // [-40, -39, -38, ..., -1, 0]
     const slope = [true_slope] // Don't forget to add brackets, i.e., specify as an array.
     const guess = [true_guess]
     const lapse = [true_lapse]
 
     // jsqp means jsQuestPlus. You can use any variable name you like.
-    const jsqp = new jsquest(
+    const jsqp = new jsQuestPlus(
         [func_resp0, func_resp1], [contrast_samples], [threshold_samples, slope, guess, lapse])
 
     console.log(jsqp)
