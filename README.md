@@ -1,8 +1,8 @@
 # jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
 
-The QUEST method (Watson & Pelli, 1983) is a Bayesian adaptive psychometric method. The goal of this project is to use [the QUEST functions distributed as a part of Psychtoolbox](http://psychtoolbox.org/docs/Quest) in online experiments.
+The QUEST method (Watson & Pelli, 1983) is a Bayesian adaptive psychometric method. jsQuest is a JavaScript library to use the QUEST method in online experiments.
 
-The files published here are translated from MATLAB files written by [Professor Denis Pelli](https://as.nyu.edu/faculty/denis-pelli.html) to JavaScript files. Almost all of the MATLAB code is commented out in each JavaScript file. The usage of each function is the same as that of MATLAB functions. So, you can refer to the help of Psychtoolbox.
+The files published here are translated from MATLAB files written by [Professor Denis Pelli](https://as.nyu.edu/faculty/denis-pelli.html) to JavaScript files. Almost all of the MATLAB code is commented out in each JavaScript file. The usage of each function is the same as that of MATLAB functions. So, you can refer to [the help of Psychtoolbox](http://psychtoolbox.org/docs/Quest).
 
 If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use jsQuestPlus instead. Change the branch from `main` to `quest_plus`.
 

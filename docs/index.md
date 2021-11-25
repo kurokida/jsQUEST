@@ -1,6 +1,6 @@
 # jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
 
-Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. Watson and Pelli (1983) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
+Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. [Watson and Pelli (1983)](https://link.springer.com/article/10.3758%2FBF03202828) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
 
 If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use jsQuestPlus instead. Please refer to [the quest_plus branch](https://github.com/kurokida/jsQUEST/tree/quest_plus).
 
