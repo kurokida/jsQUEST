@@ -1,10 +1,10 @@
 # jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
 
-The goal of this project is to use [the QUEST functions distributed as a part of Psychtoolbox](http://psychtoolbox.org/docs/Quest) in online experiments.
+The QUEST method (Watson & Pelli, 1983) is a Bayesian adaptive psychometric method. The goal of this project is to use [the QUEST functions distributed as a part of Psychtoolbox](http://psychtoolbox.org/docs/Quest) in online experiments.
 
 The files published here are translated from MATLAB files written by [Professor Denis Pelli](https://as.nyu.edu/faculty/denis-pelli.html) to JavaScript files. Almost all of the MATLAB code is commented out in each JavaScript file. The usage of each function is the same as that of MATLAB functions. So, you can refer to the help of Psychtoolbox.
 
-The main script is the dist/jsQUEST.js file.
+If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use jsQuestPlus instead. Change the branch from `main` to `quest_plus`.
 
 # How to use
 Please refer to [this page](https://kurokida.github.io/jsQUEST/).
@@ -48,7 +48,13 @@ In the above condition, xThreshold was -40.88. (The correct value was 0.0036). I
 
 # The following section describes how to use jsQUEST as an ES6 module.
 
-@tpronk developed a prototype of jsQUEST as an ES6 module. He adapted the code to act like an ES6 module, so it can easily be imported into other ES6 modules.
+@tpronk developed a prototype of jsQUEST as an ES6 module. He adapted the code to act like an ES6 module, so it can easily be imported into other ES6 modules as follows:
+
+```javascript
+import {jsquest} from "./jsQUEST.module.js";
+```
+
+# Information for developers/contributors
 
 ## Installation
 Install node, then clone the repo to your hard drive. Next, you can install jsQUEST and its dependencies by running:

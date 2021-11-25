@@ -2,6 +2,8 @@
 
 Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. Watson and Pelli (1983) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
 
+If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use jsQuestPlus instead. Please refer to [the quest_plus branch](https://github.com/kurokida/jsQUEST/tree/quest_plus).
+
 # A psychometric function assuming the Weibull distribution. 
 
 Figure 1 shows a psychophysical function which assumes the Weibull distribution. You can also see this graph in [the demo](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). 
@@ -118,5 +120,6 @@ The usage of jsQUEST is the same as that of the original QUEST except for the fo
 
 # References
 
-- [King-Smith, P. E., Grigsby, S. S., Vingrys, A. J., Benes, S. C., & Supowit, A. (1994). Efficient and unbiased modifications of the QUEST threshold method: Theory, simulations, experimental evaluation and practical implementation. Vision Research, 34(7), 885–912. ](https://doi.org/10.1016/0042-6989(94)90039-6)
-- [Watson, A. B., & Pelli, D. G. (1983). Quest: A Bayesian adaptive psychometric method. Perception & Psychophysics, 33(2). ](https://doi.org/10.3758/BF03202828)
+- [King-Smith, P. E., Grigsby, S. S., Vingrys, A. J., Benes, S. C., & Supowit, A. (1994). Efficient and unbiased modifications of the QUEST threshold method: Theory, simulations, experimental evaluation and practical implementation. Vision Research, 34, 885–912. ](https://doi.org/10.1016/0042-6989(94)90039-6)
+- [Watson, A. B. (2017). QUEST+: A general multidimensional Bayesian adaptive psychometric method. Journal of Vision 17.](https://doi.org/10.1167/17.3.10)
+- [Watson, A. B., & Pelli, D. G. (1983). Quest: A Bayesian adaptive psychometric method. Perception & Psychophysics, 33. ](https://doi.org/10.3758/BF03202828)
