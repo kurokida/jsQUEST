@@ -3255,7 +3255,7 @@
   // This project is inspired by the following two projects.
   /* global numeric */
 
-  console.log('jsQuestPlus Version 0.1');
+  console.log('jsQuestPlus Version 1.0.0');
 
   class jsquest {
       // PF menas Psychometric Functions
