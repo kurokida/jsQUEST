@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.jsQUEST = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
   let numeric = {};
   numeric.version = "1.2.6";
@@ -3366,7 +3366,7 @@
       return yqs.slice();
   }
 
-  console.log('jsQUEST Version 1.0.1');
+  console.log('jsQUEST Version 1.1.1');
 
   // Copyright (c) 2021 Daiichiro Kuroki
   // Released under the MIT license
@@ -4279,10 +4279,7 @@
           });
 
           const positive_data = [];
-          const positive_x = [];
-          if (Array.isArray(positive)) {
-              positive.forEach(element => positive_x.push(t2[element]));
-          }
+          const positive_x = get_array_using_index(t2, positive);
           for (let i = 0; i < positive.length; i++){
               positive_data.push({
                   x: positive_x[i] + tActual,
@@ -4293,11 +4290,7 @@
 
           const negative_data = [];
           if (plotIt === 2){
-              const negative_x = [];
-              if (Array.isArray(negative)) {
-                  negative.forEach(element => negative_x.push(t2[element]));
-              }
-      
+              const negative_x = get_array_using_index(t2, negative);
               for (let i = 0; i < negative.length; i++){
                   negative_data.push({
                       x: negative_x[i] + tActual,
@@ -5087,5 +5080,5 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=jsQUEST.js.map
