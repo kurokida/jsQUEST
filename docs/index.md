@@ -1,16 +1,16 @@
 # jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
 
-Using adaptive psychometric procedures, the experimenter can determine the stimulus intensity based on the outcome of the preceding trials. [Watson and Pelli (1983)](https://link.springer.com/article/10.3758%2FBF03202828) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
+Using adaptive psychometric procedures, the experimenter can determine thresholds efficiently by determining the stimulus intensity based on the stimuli and the observer’s responses in the preceding trials. [Watson and Pelli (1983)](https://link.springer.com/article/10.3758%2FBF03202828) reported QUEST which uses a Bayesian method to estimate the position of the psychometric function. jsQUEST is a translation of the MATLAB-based QUEST into JavaScript for online experiments. The source code is available on [GitHub](https://github.com/kurokida/jsQUEST).
 
-If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use jsQuestPlus instead. Please refer to [the quest_plus branch](https://github.com/kurokida/jsQUEST/tree/quest_plus).
+If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use [jsQuestPlus](https://github.com/kurokida/jsQuestPlus) instead.
 
 # A psychometric function assuming the Weibull distribution. 
 
-Figure 1 shows a psychophysical function which assumes the Weibull distribution. You can also see this graph in [the demo](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). 
+Figure 1 shows a psychophysical function which assumes a Weibull distribution. You can also see this graph in [the demo](https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/jsPsychDemo/jsQUEST_jsPsychDemo.html). 
 
 ![Weibull](./images/Weibull_function.png)
 
-*Figure 1. A psychophysical function assuming the Weibull distribution.*
+*Figure 1. A psychophysical function assuming a Weibull distribution.*
 
 This graph has been drawn using the following default values:
 
@@ -30,7 +30,7 @@ The probability of correct/YES answers is about 0.5 at (A) the x-axis of -2.5, a
 
 # Stimulus intensity
 
-Before beggining an experiment, the experimenter needs to determine what the intensity of the stimulus is. For example, it could be the luminance, color, size, length, spatial/temporal frequency, or number of dots. The experimenter is free to determine the intensity of the stimulus as long as it is considered to fit the psychophysical function.
+Before beggining an experiment, the experimenter needs to determine the stimulus intensity. For example, it could be the luminance, color, size, length, spatial/temporal frequency, or number of dots. The experimenter is free to determine the intensity of the stimulus as long as it is considered to fit the psychophysical function.
 
 # Threshold criterion expressed as probability (pThreshold)
 
@@ -48,7 +48,7 @@ Write the following line in the head section.
 <script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
 ```
 
-Or download the dist/jsQUEST.js file from [the repository](https://github.com/kurokida/jsQUEST) and include it using the script tag.
+Or download the dist/jsQUEST.js file from [the repository](https://github.com/kurokida/jsQUEST) and include it using a script tag.
 
 If you want to use jsQUEST as an ES6 module, please refer to [the README](https://github.com/kurokida/jsQUEST).
 
@@ -65,12 +65,12 @@ myquest = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
 The QuestQuantile function returns a suggestion of stimulus intensity for the next trial. You can use the QuestMean or QuestMode functions instead of the QuestQuantile.
 
 ```javascript 
-const tTest = jsQUEST.QuestQuantile(myquest);	
+tTest = jsQUEST.QuestQuantile(myquest);	
 ```
 
-If the default values are used, the first call of the QuestQuantile function returns -0.65. Note that the difference between the returned value (-0.65) and tGuess(-1) is 0.35. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of the tGuess for the first trial. As long as the same Beta, Delta, and Gamma are used the difference between the first returned value and tGuess will be about 0.35, no matter what the value of tGuess is.
+If the default values are used, the first call of the QuestQuantile function returns -0.65. Note that the difference between the returned value, -0.65, and tGuess, -1, is 0.35. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of the tGuess for the first trial. As long as the same Beta, Delta, and Gamma are used the difference between the first returned value and tGuess will be about 0.35, no matter what the value of tGuess is.
 
-The procedure of QUEST is easy to understand when the intensity of the stimulus is on a log scale, e.g. dB, while in other cases I recommend to think of it as follows. For example, if the experimenter predicts that the stimulus intensity of 150 pixels will result in a response rate of pThreshold (0.82), then tGuess should be log10(150) = 2.18. If the default values regarding Beta, Delta, and Gamma are used, the first call of QuestQuantile returns 2.53. Note that the difference between the returned value (2.18) and tGuess(2.53) is 0.35. This is the same as when tGuess is -1. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of tGuess. The intensity can be calculated in one of the two ways: (a) 150 * 2.24, or (b) 10^(2.53). The results of the two formulas are almost identical (about 338 pixels).
+The QUEST method is easy to understand when the intensity of the stimulus is on a log scale, e.g. dB, while in other cases I recommend to think of it as follows. For example, if the experimenter predicts that the stimulus intensity of 150 pixels will result in a response rate of pThreshold, 0.82, then tGuess should be log10(150) = 2.18. If the default values regarding Beta, Delta, and Gamma are used, the first call of QuestQuantile returns 2.53. Note that the difference between the returned value, 2.18, and tGuess, 2.53, is 0.35. This is the same as when tGuess is -1. The QuestQuantile proposes to present a stimulus with 10^0.35 = 2.24 times the intensity of tGuess. The intensity can be calculated in one of the two ways: (a) 150 * 2.24, or (b) 10 ^ 2.53. The results of the two formulas are almost identical (about 338 pixels).
 
 ## Update the PDF
 
