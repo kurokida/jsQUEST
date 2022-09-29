@@ -6,6 +6,18 @@ The files published here are translated from MATLAB files written by [Professor 
 
 If you are more interested in [QUEST+ (Watson, 2017)](https://jov.arvojournals.org/article.aspx?articleid=2611972) than QUEST, then you can use [jsQuestPlus](https://github.com/kurokida/jsQuestPlus) instead.
 
+# How to cite
+
+We prefer to cite the paper, but either citation is acceptable.
+
+## Paper citation
+
+Kuroki, D., & Pronk, T. (2022). jsQuestPlus: A JavaScript implementation of the QUEST+ method for estimating psychometric function parameters in online experiments. *Behavior Research Methods*. [https://doi.org/10.3758/s13428-022-01948-8](https://doi.org/10.3758/s13428-022-01948-8)
+
+## Software citation (for version 1.1.1)
+
+Kuroki, D., & Pronk, T. (2021). jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments. (Version 1.1.1) [Computer software]. [https://github.com/kurokida/jsQUEST](https://github.com/kurokida/jsQUEST)
+
 # How to use
 Please refer to [this page](https://kurokida.github.io/jsQUEST/).
 
