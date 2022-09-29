@@ -1,6 +1,6 @@
 {
   "name": "jsquest",
-  "version": "0.1.0",
+  "version": "1.1.1",
   "description": "A fork of jsQUEST (by Daiichiro Kuroki) to aid in turning the libary into an ES6 module",
   "main": "src/jsQUEST.js",
   "type": "module",
