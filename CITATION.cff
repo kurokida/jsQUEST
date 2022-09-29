@@ -1,0 +1,34 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  jsQUEST: A Bayesian adaptive psychometric method for measuring thresholds in online experiments.
+message: >-
+  Please cite the software itself and the journal article from 'preferred-citation'.
+type: software
+url: https://github.com/kurokida/jsQUEST
+version: 1.1.1
+date-released: "2021-12-07"
+authors:
+  - given-names: Daiichiro
+    family-names: Kuroki
+    email: kurokid@kyudai.jp
+    affiliation: Kyushu Univeristy
+    orcid: 'https://orcid.org/0000-0002-3547-7082'
+  - given-names: Thomas
+    family-names: Pronk
+    email: pronkthomas@gmail.com
+    affiliation: University of Amsterdam
+    orcid: 'https://orcid.org/0000-0001-9334-7190'
+references:
+  - authors:
+      - given-names: Daiichiro
+        family-names: Kuroki
+      - given-names: Thomas
+        family-names: Pronk
+    doi: 10.3758/s13428-022-01948-8
+    journal: "Behavior Research Methods"
+    title: "jsQuestPlus: A JavaScript implementation of the QUEST+ method for estimating psychometric function parameters in online experiments"
+    type: article
+    year: 2022
