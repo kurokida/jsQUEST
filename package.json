@@ -1,7 +1,7 @@
 {
   "name": "jsquest",
   "version": "1.1.1",
-  "description": "A fork of jsQUEST (by Daiichiro Kuroki) to aid in turning the libary into an ES6 module",
+  "description": "A JavaScript implementation of the QUEST method (Watson & Pelli, 1983).",
   "main": "src/jsQUEST.js",
   "type": "module",
   "dependencies": {
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tpronk/jsQUEST.git"
+    "url": "git+https://github.com/kurokida/jsQUEST.git"
   },
-  "author": "Thomas Pronk",
+  "author": "Daiichiro Kuroki",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tpronk/jsQUEST/issues"
+    "url": "https://github.com/kurokida/jsQUEST/issues"
   },
-  "homepage": "https://github.com/tpronk/jsQUEST#readme"
+  "homepage": "https://github.com/kurokida/jsQUEST"
 }
